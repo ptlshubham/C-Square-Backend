@@ -2,10 +2,10 @@
 var mysql = require('mysql');
 
 var con = mysql.createConnection({
-    host: "awsecommercenew.cyuzel9ebm9t.us-east-2.rds.amazonaws.com",
-    user: "masteradmin",
-    password: "ecommerce123",
-    database:"awsecommerce"
+    host: "localhost",
+    user: "root",
+    password: "",
+    database:"csquare"
   });
   exports.executeSql = function ( sql, callback){
         con.query(sql, function (err, result) {

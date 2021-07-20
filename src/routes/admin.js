@@ -10,36 +10,10 @@ var crypto = require('crypto');
 const { equal } = require("assert");
 
 
-router.post("/SaveMainCategory", midway.checkToken, (req, res, next) => {
+
+router.post("/SaveStdList", (req, res, next) => {
     console.log(req.body);
-    db.executeSql("INSERT INTO `category`(`name`,`parent`,`bannersimage`,`createddate`,`updateddate`,`isactive`)VALUES('" + req.body.name + "'," + req.body.parent + ",'" + req.body.bannersimage + "',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP," + req.body.isactive + ");", function (data, err) {
-        console.log(req.err)
-        if (err) {
-            res.json("error");
-        } else {
-            // res.json("success");
-            db.executeSql("SELECT id FROM category ORDER BY createddate DESC LIMIT 1", function (data1, err) {
-                if (err) {
-                    console.log("Error in store.js", err);
-                } else {
-                    db.executeSql("update `category` set bannersimage='"+req.body.bannersimage+"'  where id="+data1[0].id,function (data, err) {
-                        if (err) {
-                            console.log("Error in store.js", err);
-                        } else {
-                            console.log(data);
-                            return res.json("success");
-                        }
-                    });
-                }
-            });
-
-
-        }
-    });
-});
-router.post("/SaveBankListCategory", midway.checkToken, (req, res, next) => {
-    console.log(req.body.name);
-    db.executeSql("INSERT INTO `banklist`(`bankname`)VALUES('" + req.body.bankname + "');", function (data, err) {
+    db.executeSql("INSERT INTO `stdlist`(`stdname`, `isactive`, `createddate`, `updateddare`)VALUES('" + req.body.stdname + "',"+req.body.isactive+",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);", function (data, err) {
         if (err) {
             res.json("error");
         } else {
@@ -49,8 +23,8 @@ router.post("/SaveBankListCategory", midway.checkToken, (req, res, next) => {
     });
 });
 
-router.get("/GetClothsSize", midway.checkToken, (req, res, next) => {
-    db.executeSql("select * from clothsize ", function (data, err) {
+router.get("/GetStdList", (req, res, next) => {
+    db.executeSql("select * from stdlist ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
@@ -58,6 +32,84 @@ router.get("/GetClothsSize", midway.checkToken, (req, res, next) => {
         }
     });
 });
+
+
+router.get("/RemoveStandardList/:id", (req, res, next) => {
+
+    console.log(req.params.id);
+    db.executeSql("Delete from stdlist where id=" + req.params.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+})
+
+
+router.post("/saveSubject", (req, res, next) => {
+    console.log(req.body);
+    for (let i = 0; i < req.body.length; i++) {
+        db.executeSql("INSERT INTO `csquare`.`subjectlist`(`stdid`,`subject`,`isactive`)VALUES(" + req.body[i].id + ",'" + req.body[i].subject + "',true);", function (data, err) {
+            if (err) {
+                console.log(err);
+
+            } else {
+
+            }
+        });
+    }
+    res.json("success");
+});
+
+router.get("/GetSubjectList", (req, res, next) => {
+    db.executeSql("select s.id,s.stdid,s.subject,s.isactive,std.id as stdId,std.stdname from subjectlist s join stdlist std on s.stdId=std.id", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.post("/UpdateSujectList", (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("UPDATE `csquare`.`subjectlist` SET subject='" + req.body.subject + "' WHERE id=" + req.body.id + ";", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.get("/RemoveSubjectList/:id", (req, res, next) => {
+
+    console.log(req.params.id);
+    db.executeSql("Delete from subjectlist where id=" + req.params.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+})
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 router.get("/GetReviewList", (req, res, next) => {
     db.executeSql("select * from ratings ", function (data, err) {
@@ -78,15 +130,7 @@ router.get("/GetBankList", (req, res, next) => {
     });
 });
 
-router.get("/GetROIList", midway.checkToken, (req, res, next) => {
-    db.executeSql("select e.id,e.bankid,e.months,e.intrest,b.id as BankId,b.bankname from emi e join banklist b on e.bankid=b.id", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
+
 
 router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
     console.log('ygyguhguft')
@@ -264,29 +308,10 @@ router.post("/SaveAddProducts", midway.checkToken, (req, res, next) => {
     }
 
 });
-router.post("/UpdateReviews", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
-    db.executeSql("UPDATE `ecommerce`.`ratings` SET rating=" + req.body.rating + ",comment='" + req.body.comment + "',updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
 
 
-router.get("/RemoveReviews/:id", midway.checkToken, (req, res, next) => {
 
-    console.log(req.params.id);
-    db.executeSql("Delete from ratings where id=" + req.params.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-})
+
 router.get("/RemoveProduct/:id", midway.checkToken, (req, res, next) => {
 
     console.log(req.params.id);
@@ -703,23 +728,7 @@ router.post("/UploadMobileBannersImage", (req, res, next) => {
     });
 });
 
-router.post("/saveEmioption", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
-    for (let i = 0; i < req.body.length; i++) {
-        db.executeSql("INSERT INTO `ecommerce`.`emi`(`bankid`,`months`,`intrest`,`isactive`,`createddate`,`updateddate`)VALUES(" + req.body[i].bankid + "," + req.body[i].months + "," + req.body[i].intrest + ",true,CURRENT_TIMESTAMP,NULL);", function (data, err) {
-            if (err) {
-                console.log(err);
 
-            } else {
-
-            }
-        });
-    }
-
-    res.json("success");
-
-
-});
 
 //filter apis
 router.post("/addToNewArrivals", midway.checkToken, (req, res, next) => {
