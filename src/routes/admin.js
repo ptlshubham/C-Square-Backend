@@ -62,8 +62,8 @@ router.post("/saveSubject", (req, res, next) => {
     res.json("success");
 });
 
-router.get("/GetSubjectList", (req, res, next) => {
-    db.executeSql("select s.id,s.stdid,s.subject,s.isactive,std.id as stdId,std.stdname from subjectlist s join stdlist std on s.stdId=std.id", function (data, err) {
+router.post("/GetSubjectList", (req, res, next) => {
+    db.executeSql("select * from subjectlist where stdid="+req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
@@ -71,6 +71,7 @@ router.get("/GetSubjectList", (req, res, next) => {
         }
     });
 });
+
 
 router.post("/UpdateSujectList", (req, res, next) => {
     console.log(req.body)
@@ -95,7 +96,15 @@ router.get("/RemoveSubjectList/:id", (req, res, next) => {
     });
 })
 
-
+router.post("/GetStdItem", (req, res, next) => {
+    db.executeSql("select * from stdlist where id="+req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
 
 
 
