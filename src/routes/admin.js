@@ -106,6 +106,15 @@ router.post("/GetStdItem", (req, res, next) => {
     });
 });
 
+router.get("/GetQueType", (req, res, next) => {
+    db.executeSql("select * from quetype ", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
 
 
 
@@ -267,6 +276,9 @@ router.get("/RemoveMainCategory/:id", midway.checkToken, (req, res, next) => {
         }
     });
 });
+
+
+
 
 
 router.post("/SaveAddProducts", midway.checkToken, (req, res, next) => {
