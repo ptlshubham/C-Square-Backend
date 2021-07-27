@@ -8,6 +8,7 @@ var midway = require('./midway');
 const jwt = require('jsonwebtoken');
 var crypto = require('crypto');
 const { equal } = require("assert");
+const { Console } = require("console");
 
 
 
@@ -117,44 +118,138 @@ router.get("/GetQueType", (req, res, next) => {
 });
 
 router.post("/saveQueList", (req, res, next) => {
-
-
     db.executeSql("INSERT INTO `questionlist`(`stdid`,`subid`,`question`,`marks`,`time`,`quetype`,`isactive`)VALUES(" + req.body.stdid + "," + req.body.subid + ",'" + req.body.question + "'," + req.body.marks + "," + req.body.time + ",'" + req.body.quetype + "',true);", function (data, err) {
         // console.log(req.err)
         if (err) {
             console.log(err);
         } else {
-            console.log(data);
-            console.log(req.body);
-            res.json("success");
-            // db.executeSql("SELECT id FROM category ORDER BY createddate DESC LIMIT 1", function (data1, err) {
-            //     if (err) {
-            //         console.log("Error in store.js", err);
-            //     } else {  cvvvvvvvvg
-            //         db.executeSql("update `category` set bannersimage='"+req.body.bannersimage+"'  where id="+data1[0].id,function (data, err) {
-            //             if (err) {
-            //                 console.log("Error in store.js", err);
-            //             } else {
-            //                 console.log(data);
-            //                 return res.json("success");
-            //             }
-            //         });
-            //     }
-            // });
-            console.log(data.insertId);
-            db.executeSql("INSERT INTO `csquare`.`optionsvalue`(`queid`)VALUES(" + req.data.insertId + ");", function (data, err) {
+            if (req.body.quetype == 'MCQ') {
+                console.log(data.insertId);
+                for (let i = 0; i < req.body.options.length; i++) {
+                    db.executeSql("INSERT INTO `csquare`.`optionsvalue`(`queid`,`optionlist`)VALUES(" + data.insertId + ",'" + req.body.options[i].option + "');", function (data, err) {
+                        if (err) {
+                            console.log(err);
+
+                        } else {
+
+                        }
+                    });
+                }
+                for (let i = 0; i < req.body.answer.length; i++) {
+                    db.executeSql("INSERT INTO `answerlist`( `queid`, `answer`) VALUES(" + data.insertId + ",'" + req.body.answer[i].answer + "');", function (data, err) {
+                        if (err) {
+                            console.log(err);
+
+                        } else {
+
+                        }
+                    });
+
+                }
+            }
+            else {
+                console.log(req.body)
+                return res.json("success");
+            }
+            return res.json("success");
+        }
+    });
+});
+
+router.post("/getAllQueList", (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("select * from questionlist where subid=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+})
+
+
+router.post("/removeQueList", (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("Delete from questionlist where id=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log(err);
+        } else {
+            db.executeSql("Delete from optionsvalue where queid=" + req.body.id, function (data, err) {
                 if (err) {
                     console.log(err);
 
                 } else {
-
+                    db.executeSql("Delete from answerlist where queid=" + req.body.id, function (data, err) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                        }
+                    });
                 }
             });
+            return res.json(data);
         }
+    });
+})
 
-
+router.post("/saveTeacherList", (req, res, next) => {
+    console.log(req.body);
+    db.executeSql("INSERT INTO `teacherlist`(`firstname`,`lastname`,`qualification`,`contact`,`whatsapp`,`email`,`password`,`address`,'gender')VALUES('" + req.body.firstname + "','" + req.body.lastname + "','"+req.body,qualification+"'," + req.body.contact + "," + req.body.Whatsapp + ",'" + req.body.email + "','" + req.body.password + "','" + req.body.address + "','" + req.body.gender + "');", function (data, err) {
+        if (err) {
+            console.log(err);
+            
+        } else {
+            // console.log(res)
+            // console.log(err);
+          //  res.json("success");
+        }
     });
 });
+
+router.post("/SaveStudentList", (req, res, next) => {
+    console.log(req.body);
+    db.executeSql("INSERT INTO `studentlist`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`dateofbirth`,`contact`,`parents`,`address`,`city`,`pincode`,`standard`,`grnumber`,`bloodgroup`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.grnumber + "','" + req.body.blood + "');", function (data, err) {
+        if (err) {
+            console.log(err)
+        } else {
+
+            res.json("success");
+        }
+    });
+});
+
+router.post("/GetStudentList", (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("select * from studentlist where standard ="+ req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+})
+
+router.get("/GetTeacherList", (req, res, next) => {
+    db.executeSql("select * from teacherlist ", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.get("/GetAllStudentList", (req, res, next) => {
+    db.executeSql("select * from studentlist ", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+
 
 
 
@@ -451,15 +546,7 @@ router.post("/SaveAdminRegister", (req, res, next) => {
         }
     });
 });
-router.post("/getProductDetailImage", (req, res, next) => {
-    db.executeSql("select * from images where productid=" + req.body.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-})
+
 router.post("/SaveWebBanners", (req, res, next) => {
     console.log(req.body);
     db.executeSql("INSERT INTO `webbanners`(`name`,`bannersimage`,`status`)VALUES('" + req.body.name + "','" + req.body.bannersimage + "'," + req.body.status + ");", function (data, err) {
