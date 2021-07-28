@@ -292,8 +292,28 @@ router.post('/UserLogin', function (req, res, next) {
 
 });
 
+router.post("/removeStudentList", (req, res, next) => {
+    console.log(req.body.id);
+    db.executeSql("Delete from studentlist where id=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+})
 
 
+router.post("/removeTecaherList", (req, res, next) => {
+    console.log(req.body.id);
+    db.executeSql("Delete from teacherlist where id=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+})
 
 
 
@@ -336,17 +356,7 @@ router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
     });
 });
 
-router.post("/RemoveROIList", midway.checkToken, (req, res, next) => {
 
-    console.log(req.body.id);
-    db.executeSql("Delete from emi where id=" + req.body.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-})
 router.get("/GetCustomerList", (req, res, next) => {
     db.executeSql("select * from user ", function (data, err) {
         if (err) {
