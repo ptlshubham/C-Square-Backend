@@ -194,7 +194,7 @@ router.post("/removeQueList", (req, res, next) => {
 
 router.post("/saveTeacherList", (req, res, next) => {
     console.log(req.body);
-    db.executeSql("INSERT INTO `teacherlist`(`firstname`,`lastname`,`qualification`,`contact`,`whatsapp`,`email`,`password`,`address`,'gender')VALUES('" + req.body.firstname + "','" + req.body.lastname + "','"+req.body,qualification+"'," + req.body.contact + "," + req.body.Whatsapp + ",'" + req.body.email + "','" + req.body.password + "','" + req.body.address + "','" + req.body.gender + "');", function (data, err) {
+    db.executeSql("INSERT INTO `teacherlist`(`firstname`,`lastname`,`qualification`,`contact`,`whatsapp`,`email`,`password`,`address`,'gender')VALUES('" + req.body.firstname + "','" + req.body.lastname + "','"+req.body,qualification+"','" + req.body.contact + "','" + req.body.Whatsapp + "','" + req.body.email + "','" + req.body.password + "','" + req.body.address + "','" + req.body.gender + "');", function (data, err) {
         if (err) {
             console.log(err);
             
@@ -220,7 +220,7 @@ router.post("/SaveStudentList", (req, res, next) => {
 
 router.post("/GetStudentList", (req, res, next) => {
     console.log(req.body)
-    db.executeSql("select * from studentlist where standard ="+ req.body.id, function (data, err) {
+    db.executeSql("select * from studentlist where standard=" + req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
@@ -250,6 +250,47 @@ router.get("/GetAllStudentList", (req, res, next) => {
 });
 
 
+let secret = 'prnv';
+router.post('/UserLogin', function (req, res, next) {
+    console.log("ggggggg");
+    const body = req.body;
+    console.log(body);
+    var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
+    var repass = salt + '' + body.password;
+    var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
+    db.executeSql("select * from admin where email='" + req.body.email + "';", function (data, err) {
+        console.log(data);
+        if (data.length > 0) {
+            db.executeSql("select * from admin where email='" + req.body.email + "' and password='" + encPassword + "';", function (data1, err) {
+                console.log(data1);
+                if (data1.length > 0) {
+
+                    module.exports.user1 = {
+                        username: data1[0].email, password: data1[0].password
+                    }
+                    let token = jwt.sign({ username: data1[0].email, password: data1[0].password },
+                        secret,
+                        {
+                            expiresIn: '1h' // expires in 24 hours
+                        }
+                    );
+                    console.log("token=", token);
+                    data[0].token = token;
+
+                    res.cookie('auth', token);
+                    res.json(data);
+                }
+                else {
+                    return res.json(2);
+                }
+            });
+        }
+        else {
+            return res.json(1);
+        }
+    });
+
+});
 
 
 
@@ -491,47 +532,7 @@ router.get("/RemoveProduct/:id", midway.checkToken, (req, res, next) => {
     });
 })
 
-let secret = 'prnv';
-router.post('/login', function (req, res, next) {
-    console.log("ggggggg");
-    const body = req.body;
-    console.log(body);
-    var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
-    var repass = salt + '' + body.password;
-    var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
-    db.executeSql("select * from admin where email='" + req.body.email + "';", function (data, err) {
-        console.log(data);
-        if (data.length > 0) {
-            db.executeSql("select * from admin where email='" + req.body.email + "' and password='" + encPassword + "';", function (data1, err) {
-                console.log(data1);
-                if (data1.length > 0) {
 
-                    module.exports.user1 = {
-                        username: data1[0].email, password: data1[0].password
-                    }
-                    let token = jwt.sign({ username: data1[0].email, password: data1[0].password },
-                        secret,
-                        {
-                            expiresIn: '1h' // expires in 24 hours
-                        }
-                    );
-                    console.log("token=", token);
-                    data[0].token = token;
-
-                    res.cookie('auth', token);
-                    res.json(data);
-                }
-                else {
-                    return res.json(2);
-                }
-            });
-        }
-        else {
-            return res.json(1);
-        }
-    });
-
-});
 
 router.post("/SaveAdminRegister", (req, res, next) => {
     console.log("vdfvfvfv");
