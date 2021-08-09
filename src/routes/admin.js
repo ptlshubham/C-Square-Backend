@@ -85,6 +85,7 @@ router.post("/UpdateSujectList", (req, res, next) => {
     });
 });
 
+
 router.get("/RemoveSubjectList/:id", (req, res, next) => {
 
     console.log(req.params.id);
@@ -155,13 +156,51 @@ router.post("/saveQueList", (req, res, next) => {
         }
     });
 });
-
-router.post("/getAllQueList", (req, res, next) => {
+router.post("/UpdateQuestionList", (req, res, next) => {
     console.log(req.body)
+    db.executeSql(" UPDATE `questionlist` SET question='" + req.body.question + "',marks=" + req.body.marks + ",time=" + req.body.time + ",quetype='" + req.body.quetype + "',updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+router.post("/getAllQueList", (req, res, next) => {
+
+
     db.executeSql("select * from questionlist where subid=" + req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
+            for (let i = 0; i < data.length; i++) {
+                console.log(data[i].id);
+                data[i].option = [];
+                data[i].answer = [];
+                db.executeSql("select * from optionsvalue where queid=" + data[i].id + ";", function (data1, err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        data[i].option = data1;
+                    }
+
+
+                });
+                db.executeSql("select * from answerlist where queid=" + data[i].id + ";", function (data2, err) {
+                    if (err) {
+                        console.log(err);
+                    } else if (data2.length > 0) {
+                        console.log(data2);
+                        data[i].answer = data2;
+                    }
+                    else {
+                        data[i].answer = [];
+                    }
+
+                })
+            };
+
             return res.json(data);
         }
     });
@@ -194,20 +233,20 @@ router.post("/removeQueList", (req, res, next) => {
 
 router.post("/saveTeacherList", (req, res, next) => {
     console.log(req.body);
-    db.executeSql("INSERT INTO `teacherlist`(`firstname`,`lastname`,`qualification`,`contact`,`whatsapp`,`email`,`password`,`address`,'gender')VALUES('" + req.body.firstname + "','" + req.body.lastname + "','"+req.body,qualification+"','" + req.body.contact + "','" + req.body.Whatsapp + "','" + req.body.email + "','" + req.body.password + "','" + req.body.address + "','" + req.body.gender + "');", function (data, err) {
+    db.executeSql("INSERT INTO `teacherlist`(`firstname`,`lastname`,`qualification`,`contact`,`whatsapp`,`email`,`password`,`address`,`gender`)VALUES('" + req.body.firstname + "','" + req.body.lastname + "','" + req.body.qualification + "','" + req.body.contact + "','" + req.body.Whatsapp + "','" + req.body.email + "','" + req.body.password + "','" + req.body.address + "','" + req.body.gender + "');", function (data, err) {
         if (err) {
             console.log(err);
-            
+
         } else {
             // console.log(res)
             // console.log(err);
-          //  res.json("success");
+            res.json("success");
         }
     });
 });
 
 router.post("/SaveStudentList", (req, res, next) => {
-    console.log(req.body);
+
     db.executeSql("INSERT INTO `studentlist`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`dateofbirth`,`contact`,`parents`,`address`,`city`,`pincode`,`standard`,`grnumber`,`bloodgroup`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.grnumber + "','" + req.body.blood + "');", function (data, err) {
         if (err) {
             console.log(err)
@@ -315,6 +354,29 @@ router.post("/removeTecaherList", (req, res, next) => {
     });
 })
 
+router.post("/UpdateTecaherList", (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("UPDATE `teacherlist` SET `firstname`='" + req.body.firstname + "',`lastname`='" + req.body.lastname + "',`qualification`='" + req.body.qualification + "',`contact`='" + req.body.contact + "',`whatsapp`=" + req.body.whatsapp + ",`email`='" + req.body.email + "',`password`='" + req.body.password + "',`address`='" + req.body.address + "',`gender`='" + req.body.gender + "' WHERE id=" + req.body.id + ";", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.post("/UpdateStudentList", (req, res, next) => {
+    console.log(req.body.id)
+    db.executeSql("UPDATE `studentlist` SET `firstname`='" + req.body.firstname + "',`middlename`='" + req.body.middlename + "',`lastname`='" + req.body.lastname + "',`email`='" + req.body.email + "',`password`='" + req.body.password + "',`gender`='" + req.body.gender + "',`contact`=" + req.body.contact + ",`parents`=" + req.body.parents + ",`address`='" + req.body.address + "',`city`='" + req.body.city + "',`pincode`=" + req.body.pincode + ",`standard`='" + req.body.standard + "',`grnumber`=" + req.body.grnumber + ",`bloodgroup`='" + req.body.blood + "' WHERE id=" + req.body.id + ";", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+
 
 
 
@@ -375,15 +437,7 @@ router.get("/GetMainCategory/:id", (req, res, next) => {
         }
     });
 });
-router.post("/UpdateMainCategory", midway.checkToken, (req, res, next) => {
-    db.executeSql("UPDATE `ecommerce`.`category` SET name='" + req.body.name + "',updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
+
 router.post("/UpdateCategory", midway.checkToken, (req, res, next) => {
     console.log(req.body);
     db.executeSql("UPDATE `ecommerce`.`category` SET parent=" + req.body.parent + ",bannersimage='" + req.body.bannerimage + "',name='" + req.body.name + "',updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
