@@ -119,7 +119,7 @@ router.get("/GetQueType", (req, res, next) => {
 });
 
 router.post("/saveQueList", (req, res, next) => {
-    db.executeSql("INSERT INTO `questionlist`(`stdid`,`subid`,`question`,`marks`,`time`,`quetype`,`isactive`)VALUES(" + req.body.stdid + "," + req.body.subid + ",'" + req.body.question + "'," + req.body.marks + "," + req.body.time + ",'" + req.body.quetype + "',true);", function (data, err) {
+    db.executeSql("INSERT INTO `questionlist`(`stdid`,`subid`,`question`,`marks`,`time`,`quetype`,`isactive`)VALUES(" + req.body.stdid + "," + req.body.subid + ",'" + req.body.question + "'," + req.body.marks + "," + req.body.time + ",'" + req.body.quetype + "',false);", function (data, err) {
         // console.log(req.err)
         if (err) {
             console.log(err);
