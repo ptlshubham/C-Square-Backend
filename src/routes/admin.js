@@ -204,6 +204,23 @@ router.post("/getAllQueList", (req, res, next) => {
             return res.json(data);
         }
     });
+});
+router.post("/SaveTest",(req,res,next)=>{
+    db.executeSql("INSERT INTO `testlist`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`) VALUES ("+req.body.standardId+","+req.body.subjectId+","+req.body.totalmarks+","+req.body.totalduration+",'"+req.body.testname+"',true,CURRENT_TIMESTAMP,null)", function (data, err) {
+        if (err) {
+            console.log(err);
+        } else {
+            data.insertId
+            for(let i=0;i<req.body.questionlist.length;i++){
+                db.executeSql("INSERT INTO `testquelist`(`testid`, `queid`) VALUES ("+data.insertId+","+req.body.questionlist+i[i]+")",function(data,err){
+                    if(err){
+                        console.log(err)
+                    }
+                })
+            }
+            return res.json('success');
+        }
+    });
 })
 
 
