@@ -12,7 +12,7 @@ const { Console } = require("console");
 
 
 
-router.post("/SaveStdList", (req, res, next) => {
+router.post("/SaveStdList",midway.checkToken, (req, res, next) => {
     console.log(req.body);
     db.executeSql("INSERT INTO `stdlist`(`stdname`, `isactive`, `createddate`, `updateddare`)VALUES('" + req.body.stdname + "'," + req.body.isactive + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);", function (data, err) {
         if (err) {
@@ -24,7 +24,7 @@ router.post("/SaveStdList", (req, res, next) => {
     });
 });
 
-router.get("/GetStdList", (req, res, next) => {
+router.get("/GetStdList",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from stdlist ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -35,7 +35,7 @@ router.get("/GetStdList", (req, res, next) => {
 });
 
 
-router.get("/RemoveStandardList/:id", (req, res, next) => {
+router.get("/RemoveStandardList/:id",midway.checkToken, (req, res, next) => {
 
     console.log(req.params.id);
     db.executeSql("Delete from stdlist where id=" + req.params.id, function (data, err) {
@@ -48,7 +48,7 @@ router.get("/RemoveStandardList/:id", (req, res, next) => {
 })
 
 
-router.post("/saveSubject", (req, res, next) => {
+router.post("/saveSubject",midway.checkToken, (req, res, next) => {
     console.log(req.body);
     for (let i = 0; i < req.body.length; i++) {
         db.executeSql("INSERT INTO `csquare`.`subjectlist`(`stdid`,`subject`,`isactive`)VALUES(" + req.body[i].id + ",'" + req.body[i].subject + "',true);", function (data, err) {
@@ -63,7 +63,7 @@ router.post("/saveSubject", (req, res, next) => {
     res.json("success");
 });
 
-router.post("/GetSubjectList", (req, res, next) => {
+router.post("/GetSubjectList",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from subjectlist where stdid=" + req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -74,7 +74,7 @@ router.post("/GetSubjectList", (req, res, next) => {
 });
 
 
-router.post("/UpdateSujectList", (req, res, next) => {
+router.post("/UpdateSujectList",midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql("UPDATE `csquare`.`subjectlist` SET subject='" + req.body.subject + "' WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
@@ -86,7 +86,7 @@ router.post("/UpdateSujectList", (req, res, next) => {
 });
 
 
-router.get("/RemoveSubjectList/:id", (req, res, next) => {
+router.get("/RemoveSubjectList/:id",midway.checkToken, (req, res, next) => {
 
     console.log(req.params.id);
     db.executeSql("Delete from subjectlist where id=" + req.params.id, function (data, err) {
@@ -98,7 +98,7 @@ router.get("/RemoveSubjectList/:id", (req, res, next) => {
     });
 })
 
-router.post("/GetStdItem", (req, res, next) => {
+router.post("/GetStdItem",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from stdlist where id=" + req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -108,7 +108,7 @@ router.post("/GetStdItem", (req, res, next) => {
     });
 });
 
-router.get("/GetQueType", (req, res, next) => {
+router.get("/GetQueType",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from quetype ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -118,7 +118,7 @@ router.get("/GetQueType", (req, res, next) => {
     });
 });
 
-router.post("/saveQueList", (req, res, next) => {
+router.post("/saveQueList",midway.checkToken, (req, res, next) => {
     db.executeSql("INSERT INTO `questionlist`(`stdid`,`subid`,`question`,`marks`,`time`,`quetype`,`isactive`)VALUES(" + req.body.stdid + "," + req.body.subid + ",'" + req.body.question + "'," + req.body.marks + "," + req.body.time + ",'" + req.body.quetype + "',false);", function (data, err) {
         // console.log(req.err)
         if (err) {
@@ -156,7 +156,7 @@ router.post("/saveQueList", (req, res, next) => {
         }
     });
 });
-router.post("/UpdateQuestionList", (req, res, next) => {
+router.post("/UpdateQuestionList",midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql(" UPDATE `questionlist` SET question='" + req.body.question + "',marks=" + req.body.marks + ",time=" + req.body.time + ",quetype='" + req.body.quetype + "',updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
@@ -166,7 +166,7 @@ router.post("/UpdateQuestionList", (req, res, next) => {
         }
     });
 });
-router.post("/getAllQueList", (req, res, next) => {
+router.post("/getAllQueList",midway.checkToken, (req, res, next) => {
 
 
     db.executeSql("select * from questionlist where subid=" + req.body.id, function (data, err) {
@@ -207,7 +207,7 @@ router.post("/getAllQueList", (req, res, next) => {
 })
 
 
-router.post("/removeQueList", (req, res, next) => {
+router.post("/removeQueList",midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql("Delete from questionlist where id=" + req.body.id, function (data, err) {
         if (err) {
@@ -231,7 +231,7 @@ router.post("/removeQueList", (req, res, next) => {
     });
 })
 
-router.post("/saveTeacherList", (req, res, next) => {
+router.post("/saveTeacherList",midway.checkToken, (req, res, next) => {
     console.log(req.body);
     db.executeSql("INSERT INTO `teacherlist`(`firstname`,`lastname`,`qualification`,`contact`,`whatsapp`,`email`,`password`,`address`,`gender`)VALUES('" + req.body.firstname + "','" + req.body.lastname + "','" + req.body.qualification + "','" + req.body.contact + "','" + req.body.Whatsapp + "','" + req.body.email + "','" + req.body.password + "','" + req.body.address + "','" + req.body.gender + "');", function (data, err) {
         if (err) {
@@ -245,7 +245,7 @@ router.post("/saveTeacherList", (req, res, next) => {
     });
 });
 
-router.post("/SaveStudentList", (req, res, next) => {
+router.post("/SaveStudentList",midway.checkToken, (req, res, next) => {
 
     db.executeSql("INSERT INTO `studentlist`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`dateofbirth`,`contact`,`parents`,`address`,`city`,`pincode`,`standard`,`grnumber`,`bloodgroup`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.grnumber + "','" + req.body.blood + "');", function (data, err) {
         if (err) {
@@ -257,7 +257,7 @@ router.post("/SaveStudentList", (req, res, next) => {
     });
 });
 
-router.post("/GetStudentList", (req, res, next) => {
+router.post("/GetStudentList",midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql("select * from studentlist where standard=" + req.body.id, function (data, err) {
         if (err) {
@@ -268,7 +268,7 @@ router.post("/GetStudentList", (req, res, next) => {
     });
 })
 
-router.get("/GetTeacherList", (req, res, next) => {
+router.get("/GetTeacherList",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from teacherlist ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -278,7 +278,7 @@ router.get("/GetTeacherList", (req, res, next) => {
     });
 });
 
-router.get("/GetAllStudentList", (req, res, next) => {
+router.get("/GetAllStudentList",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from studentlist ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -331,7 +331,7 @@ router.post('/login', function (req, res, next) {
 
 });
 
-router.post("/removeStudentList", (req, res, next) => {
+router.post("/removeStudentList",midway.checkToken, (req, res, next) => {
     console.log(req.body.id);
     db.executeSql("Delete from studentlist where id=" + req.body.id, function (data, err) {
         if (err) {
@@ -343,7 +343,7 @@ router.post("/removeStudentList", (req, res, next) => {
 })
 
 
-router.post("/removeTecaherList", (req, res, next) => {
+router.post("/removeTecaherList",midway.checkToken, (req, res, next) => {
     console.log(req.body.id);
     db.executeSql("Delete from teacherlist where id=" + req.body.id, function (data, err) {
         if (err) {
@@ -354,7 +354,7 @@ router.post("/removeTecaherList", (req, res, next) => {
     });
 })
 
-router.post("/UpdateTecaherList", (req, res, next) => {
+router.post("/UpdateTecaherList",midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql("UPDATE `teacherlist` SET `firstname`='" + req.body.firstname + "',`lastname`='" + req.body.lastname + "',`qualification`='" + req.body.qualification + "',`contact`='" + req.body.contact + "',`whatsapp`=" + req.body.whatsapp + ",`email`='" + req.body.email + "',`password`='" + req.body.password + "',`address`='" + req.body.address + "',`gender`='" + req.body.gender + "' WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
@@ -365,7 +365,7 @@ router.post("/UpdateTecaherList", (req, res, next) => {
     });
 });
 
-router.post("/UpdateStudentList", (req, res, next) => {
+router.post("/UpdateStudentList",midway.checkToken, (req, res, next) => {
     console.log(req.body.id)
     db.executeSql("UPDATE `studentlist` SET `firstname`='" + req.body.firstname + "',`middlename`='" + req.body.middlename + "',`lastname`='" + req.body.lastname + "',`email`='" + req.body.email + "',`password`='" + req.body.password + "',`gender`='" + req.body.gender + "',`contact`=" + req.body.contact + ",`parents`=" + req.body.parents + ",`address`='" + req.body.address + "',`city`='" + req.body.city + "',`pincode`=" + req.body.pincode + ",`standard`='" + req.body.standard + "',`grnumber`=" + req.body.grnumber + ",`bloodgroup`='" + req.body.blood + "' WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
