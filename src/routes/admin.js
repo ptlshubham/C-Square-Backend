@@ -290,8 +290,8 @@ router.get("/GetAllStudentList", (req, res, next) => {
 
 
 let secret = 'prnv';
-router.post('/UserLogin', function (req, res, next) {
-    console.log("ggggggg");
+router.post('/login', function (req, res, next) {
+    
     const body = req.body;
     console.log(body);
     var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
