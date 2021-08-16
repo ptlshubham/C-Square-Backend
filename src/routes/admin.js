@@ -205,7 +205,8 @@ router.post("/getAllQueList",midway.checkToken, (req, res, next) => {
         }
     });
 });
-router.post("/SaveTest",(req,res,next)=>{
+router.post("/SaveTest",midway.checkToken,(req,res,next)=>{
+    console.log(req.body)
     db.executeSql("INSERT INTO `testlist`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`) VALUES ("+req.body.standardId+","+req.body.subjectId+","+req.body.totalmarks+","+req.body.totalduration+",'"+req.body.testname+"',true,CURRENT_TIMESTAMP,null)", function (data, err) {
         if (err) {
             console.log(err);
@@ -285,6 +286,16 @@ router.post("/GetStudentList",midway.checkToken, (req, res, next) => {
     });
 })
 
+router.post("/GetTestList",midway.checkToken, (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("select * from testlist where subjectId=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+})
 router.get("/GetTeacherList",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from teacherlist ", function (data, err) {
         if (err) {
@@ -305,6 +316,15 @@ router.get("/GetAllStudentList",midway.checkToken, (req, res, next) => {
     });
 });
 
+router.get("/GetAllTestList",midway.checkToken, (req, res, next) => {
+    db.executeSql("select * from testlist ", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
 
 let secret = 'prnv';
 router.post('/login', function (req, res, next) {
