@@ -305,6 +305,15 @@ router.get("/GetTeacherList",midway.checkToken, (req, res, next) => {
         }
     });
 });
+router.get("/GetAllSubjects",midway.checkToken, (req, res, next) => {
+    db.executeSql("select * from subjectlist", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
 
 router.get("/GetAllStudentList",midway.checkToken, (req, res, next) => {
     db.executeSql("select * from studentlist ", function (data, err) {
