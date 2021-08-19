@@ -265,8 +265,8 @@ router.post("/saveTeacherList", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/SaveStudentList", midway.checkToken, (req, res, next) => {
-
-    db.executeSql("INSERT INTO `studentlist`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`dateofbirth`,`contact`,`parents`,`address`,`city`,`pincode`,`standard`,`grnumber`,`bloodgroup`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.grnumber + "','" + req.body.blood + "');", function (data, err) {
+    console.log('hgfhfhgifgyfyifyjf');
+    db.executeSql("INSERT INTO `studentlist`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`dateofbirth`,`contact`,`parents`,`fname`, `mname`, `mnumber`, `pactive`, `mactive`, `cactive`, `batchtime`, `cmmitfee`,`address`,`city`,`pincode`,`standard`,`grnumber`,`propic`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.fname + "','" + req.body.mname + "'," + req.body.mnumber + ",'" + req.body.pactive + "','" + req.body.mactive + "','" + req.body.cactive + "','" + req.body.batchtime + "','" + req.body.cfees + "','" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.grnumber + "','" + req.body.profile + "');", function (data, err) {
         if (err) {
             console.log(err)
         } else {
@@ -304,14 +304,14 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
         if (err) {
             console.log("Error in store.js", err);
         } else {
-            var qlist=[];
-            for(let i=0;i<data.length;i++){
+            var qlist = [];
+            for (let i = 0; i < data.length; i++) {
                 db.executeSql("select * from questionlist where id=" + data[i].queid, function (data1, err) {
                     if (err) {
                         console.log("Error in store.js", err);
                     } else {
                         qlist.push(data1[0]);
-                        if(qlist.length == data.length){
+                        if (qlist.length == data.length) {
                             console.log(qlist);
                             return res.json(qlist);
                         }
@@ -319,11 +319,11 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
                     }
                 });
             }
-           
+
         }
-       
+
     });
-    
+
 })
 
 router.get("/GetTeacherList", midway.checkToken, (req, res, next) => {
@@ -444,7 +444,7 @@ router.post("/UpdateTecaherList", midway.checkToken, (req, res, next) => {
 
 router.post("/UpdateStudentList", midway.checkToken, (req, res, next) => {
     console.log(req.body.id)
-    db.executeSql("UPDATE `studentlist` SET `firstname`='" + req.body.firstname + "',`middlename`='" + req.body.middlename + "',`lastname`='" + req.body.lastname + "',`email`='" + req.body.email + "',`password`='" + req.body.password + "',`gender`='" + req.body.gender + "',`contact`=" + req.body.contact + ",`parents`=" + req.body.parents + ",`address`='" + req.body.address + "',`city`='" + req.body.city + "',`pincode`=" + req.body.pincode + ",`standard`='" + req.body.standard + "',`grnumber`=" + req.body.grnumber + ",`bloodgroup`='" + req.body.blood + "' WHERE id=" + req.body.id + ";", function (data, err) {
+    db.executeSql("UPDATE `studentlist` SET `firstname`='" + req.body.firstname + "',`middlename`='" + req.body.middlename + "',`lastname`='" + req.body.lastname + "',`email`='" + req.body.email + "',`password`='" + req.body.password + "',`gender`='" + req.body.gender + "',`contact`=" + req.body.contact + ",`parents`=" + req.body.parents + ",`address`='" + req.body.address + "',`city`='" + req.body.city + "',`pincode`=" + req.body.pincode + ",`standard`='" + req.body.standard + "',`grnumber`=" + req.body.grnumber + "  WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
@@ -453,9 +453,142 @@ router.post("/UpdateStudentList", midway.checkToken, (req, res, next) => {
     });
 });
 
+router.post("/UploadProfileImage", (req, res, next) => {
+    var imgname = generateUUID();
 
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'images/profile');
+        },
+        // By default, multer removes file extensions so let's add them back
+        filename: function (req, file, cb) {
 
+            cb(null, imgname + path.extname(file.originalname));
+        }
+    });
+    let upload = multer({ storage: storage }).single('file');
+    upload(req, res, function (err) {
+        console.log("path=", config.url + 'images/profile/' + req.file.filename);
 
+        if (req.fileValidationError) {
+            console.log("err1", req.fileValidationError);
+            return res.json("err1", req.fileValidationError);
+        } else if (!req.file) {
+            console.log('Please select an image to upload');
+            return res.json('Please select an image to upload');
+        } else if (err instanceof multer.MulterError) {
+            console.log("err3");
+            return res.json("err3", err);
+        } else if (err) {
+            console.log("err4");
+            return res.json("err4", err);
+        }
+        return res.json('/images/profile/' + req.file.filename);
+
+        console.log("You have uploaded this image");
+    });
+});
+
+router.post("/UploadBannersImage", (req, res, next) => {
+    var imgname = generateUUID();
+
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'images/banners');
+        },
+        // By default, multer removes file extensions so let's add them back
+        filename: function (req, file, cb) {
+
+            cb(null, imgname + path.extname(file.originalname));
+        }
+    });
+    let upload = multer({ storage: storage }).single('file');
+    upload(req, res, function (err) {
+        console.log("path=", config.url + 'images/banners/' + req.file.filename);
+
+        if (req.fileValidationError) {
+            console.log("err1", req.fileValidationError);
+            return res.json("err1", req.fileValidationError);
+        } else if (!req.file) {
+            console.log('Please select an image to upload');
+            return res.json('Please select an image to upload');
+        } else if (err instanceof multer.MulterError) {
+            console.log("err3");
+            return res.json("err3", err);
+        } else if (err) {
+            console.log("err4");
+            return res.json("err4", err);
+        }
+        return res.json('/images/banners/' + req.file.filename);
+
+        console.log("You have uploaded this image");
+    });
+});
+
+router.post("/SaveWebBanners", (req, res, next) => {
+    console.log(req.body);
+    db.executeSql("INSERT INTO `webbanners`(`name`,`bannersimage`,`status`)VALUES('" + req.body.name + "','" + req.body.bannersimage + "'," + req.body.status + ");", function (data, err) {
+        if (err) {
+            res.json("error");
+        } else {
+            res.json("success");
+        }
+    });
+});
+
+router.get("/GetWebBanners", midway.checkToken, (req, res, next) => {
+    console.log(req.body.id)
+    db.executeSql("select * from webbanners ", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.post("/RemoveWebBanners", midway.checkToken, (req, res, next) => {
+    console.log(req.id)
+    db.executeSql("Delete from webbanners where id=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.post("/UpdateActiveWebBanners", midway.checkToken, (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("UPDATE `csquare`.`webbanners` SET status=" + req.body.status + " WHERE id=" + req.body.id + ";", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.get("/GetWebBanner", (req, res, next) => {
+    db.executeSql("select * from webbanners where status=1", function(data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.get("/getStudentTest", midway.checkToken, (req, res, next) => {
+    console.log(req.body.id)
+    db.executeSql("select * from testlist ", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
 
 
 
@@ -689,26 +822,8 @@ router.post("/SaveAdminRegister", (req, res, next) => {
     });
 });
 
-router.post("/SaveWebBanners", (req, res, next) => {
-    console.log(req.body);
-    db.executeSql("INSERT INTO `webbanners`(`name`,`bannersimage`,`status`)VALUES('" + req.body.name + "','" + req.body.bannersimage + "'," + req.body.status + ");", function (data, err) {
-        if (err) {
-            res.json("error");
-        } else {
-            res.json("success");
-        }
-    });
-});
-router.post("/UpdateActiveWebBanners", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
-    db.executeSql("UPDATE `ecommerce`.`webbanners` SET status=" + req.body.status + " WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
+
+
 router.post("/SaveMobileBanners", midway.checkToken, (req, res, next) => {
     console.log(req.body);
 
@@ -946,41 +1061,7 @@ router.post("/UploadCategoryBannersImage", (req, res, next) => {
         console.log("You have uploaded this image");
     });
 });
-router.post("/UploadBannersImage", (req, res, next) => {
-    var imgname = generateUUID();
 
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'images/banners');
-        },
-        // By default, multer removes file extensions so let's add them back
-        filename: function (req, file, cb) {
-
-            cb(null, imgname + path.extname(file.originalname));
-        }
-    });
-    let upload = multer({ storage: storage }).single('file');
-    upload(req, res, function (err) {
-        console.log("path=", config.url + 'images/banners/' + req.file.filename);
-
-        if (req.fileValidationError) {
-            console.log("err1", req.fileValidationError);
-            return res.json("err1", req.fileValidationError);
-        } else if (!req.file) {
-            console.log('Please select an image to upload');
-            return res.json('Please select an image to upload');
-        } else if (err instanceof multer.MulterError) {
-            console.log("err3");
-            return res.json("err3", err);
-        } else if (err) {
-            console.log("err4");
-            return res.json("err4", err);
-        }
-        return res.json('/images/banners/' + req.file.filename);
-
-        console.log("You have uploaded this image");
-    });
-});
 router.post("/UploadMobileBannersImage", (req, res, next) => {
     var imgname = generateUUID();
 
