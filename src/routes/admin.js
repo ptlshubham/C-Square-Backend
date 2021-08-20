@@ -265,7 +265,6 @@ router.post("/saveTeacherList", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/SaveStudentList", midway.checkToken, (req, res, next) => {
-    console.log('hgfhfhgifgyfyifyjf');
     db.executeSql("INSERT INTO `studentlist`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`dateofbirth`,`contact`,`parents`,`fname`, `mname`, `mnumber`, `pactive`, `mactive`, `cactive`, `batchtime`, `cmmitfee`,`address`,`city`,`pincode`,`standard`,`grnumber`,`propic`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.fname + "','" + req.body.mname + "'," + req.body.mnumber + ",'" + req.body.pactive + "','" + req.body.mactive + "','" + req.body.cactive + "','" + req.body.batchtime + "','" + req.body.cfees + "','" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.grnumber + "','" + req.body.profile + "');", function (data, err) {
         if (err) {
             console.log(err)
@@ -299,7 +298,6 @@ router.post("/GetTestList", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
     db.executeSql("select * from testquelist where testid=" + req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -570,7 +568,7 @@ router.post("/UpdateActiveWebBanners", midway.checkToken, (req, res, next) => {
 });
 
 router.get("/GetWebBanner", (req, res, next) => {
-    db.executeSql("select * from webbanners where status=1", function(data, err) {
+    db.executeSql("select * from webbanners where status=1", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
@@ -591,22 +589,10 @@ router.get("/getStudentTest", midway.checkToken, (req, res, next) => {
 });
 
 
-
-
-
-
-
-router.get("/GetReviewList", (req, res, next) => {
-    db.executeSql("select * from ratings ", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-router.get("/GetBankList", (req, res, next) => {
-    db.executeSql("select * from banklist ", function (data, err) {
+router.post("/updateSendLink", midway.checkToken, (req, res, next) => {
+    console.log('gfyguhufu')
+    console.log(req.body);
+    db.executeSql("UPDATE `csquare`.`testlist` SET activetest=true,updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
@@ -616,10 +602,8 @@ router.get("/GetBankList", (req, res, next) => {
 });
 
 
-
-router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
-    console.log('ygyguhguft')
-    db.executeSql("select o.id,o.username,o.userid,o.addressid,o.productid,o.quantity,o.transactionid,o.modofpayment,o.total,o.status,o.orderdate,o.deliverydate,p.id as ProductId,p.productName,p.brandName,p.manufacturerName,p.startRating,p.productPrice,p.discountPrice,p.avibilityStatus,p.descripition,p.productMainImage, ad.address ,ad.city,ad.state,ad.pincode,ad.contactnumber from orders o inner join product p on o.productid=p.id inner join useraddress ad on ad.id = o.addressid where o.status='" + req.body.status + "';", function (data, err) {
+router.get("/GetStudentActiveTest",midway.checkToken, (req, res, next) => {
+    db.executeSql("select t.id,t.stdid,t.subjectId,t.totalmarks,t.totalminute,t.testname,t.isactive,t.activetest,t.deactivetest,t.createdate,t.updateddate,s.stdname as StdName,su.subject from testlist t join stdlist s on t.stdid=s.id join subjectlist su on t.subjectId = su.id where t.activetest=1 ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
@@ -627,6 +611,18 @@ router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
         }
     });
 });
+
+
+// router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
+//     console.log('ygyguhguft')
+//     db.executeSql("select o.id,o.username,o.userid,o.addressid,o.productid,o.quantity,o.transactionid,o.modofpayment,o.total,o.status,o.orderdate,o.deliverydate,p.id as ProductId,p.productName,p.brandName,p.manufa ad.addresber from orders o inner join product p on o.productid=p.id inner join useraddress ad on ad.id = o.addressid where o.status='" + req.body.status + "';", function (data, err) {
+//         if (err) {
+//             console.log("Error in store.js", err);
+//         } else {
+//             return res.json(data);
+//         }
+//     });
+// });
 
 
 router.get("/GetCustomerList", (req, res, next) => {
