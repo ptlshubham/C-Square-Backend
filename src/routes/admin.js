@@ -309,11 +309,10 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
                         console.log("Error in store.js", err);
                     } else {
                         qlist.push(data1[0]);
-                        if (qlist.length == data.length) {
-                            console.log(qlist);
+                        if (qlist.length == data.length) 
+                        {
                             return res.json(qlist);
                         }
-                        // console.log(qlist);
                     }
                 });
             }
@@ -324,6 +323,18 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
 
 })
 
+router.post("/GetOptionValueTest",midway.checkToken,(req,res,next)=>{
+    db.executeSql("select * from optionsvalue where queid="+req.body.id,function(data,err){
+        if(err){
+            console.log(err);
+        }
+        else{
+           return res.json(data);
+          
+        }
+    })
+ 
+})
 router.get("/GetTeacherList", midway.checkToken, (req, res, next) => {
     db.executeSql("select * from teacherlist ", function (data, err) {
         if (err) {
