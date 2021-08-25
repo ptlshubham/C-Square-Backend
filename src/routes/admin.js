@@ -309,8 +309,7 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
                         console.log("Error in store.js", err);
                     } else {
                         qlist.push(data1[0]);
-                        if (qlist.length == data.length) 
-                        {
+                        if (qlist.length == data.length) {
                             return res.json(qlist);
                         }
                     }
@@ -323,17 +322,17 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
 
 })
 
-router.post("/GetOptionValueTest",midway.checkToken,(req,res,next)=>{
-    db.executeSql("select * from optionsvalue where queid="+req.body.id,function(data,err){
-        if(err){
+router.post("/GetOptionValueTest", midway.checkToken, (req, res, next) => {
+    db.executeSql("select * from optionsvalue where queid=" + req.body.id, function (data, err) {
+        if (err) {
             console.log(err);
         }
-        else{
-           return res.json(data);
-          
+        else {
+            return res.json(data);
+
         }
     })
- 
+
 })
 router.get("/GetTeacherList", midway.checkToken, (req, res, next) => {
     db.executeSql("select * from teacherlist ", function (data, err) {
@@ -613,7 +612,7 @@ router.post("/updateSendLink", midway.checkToken, (req, res, next) => {
 });
 
 
-router.get("/GetStudentActiveTest",midway.checkToken, (req, res, next) => {
+router.get("/GetStudentActiveTest", midway.checkToken, (req, res, next) => {
     db.executeSql("select t.id,t.stdid,t.subjectId,t.totalmarks,t.totalminute,t.testname,t.isactive,t.activetest,t.deactivetest,t.createdate,t.updateddate,s.stdname as StdName,su.subject from testlist t join stdlist s on t.stdid=s.id join subjectlist su on t.subjectId = su.id where t.activetest=1 ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -624,6 +623,65 @@ router.get("/GetStudentActiveTest",midway.checkToken, (req, res, next) => {
 });
 
 
+router.post("/UpdatePendingTest", midway.checkToken, (req, res, next) => {
+    console.log(req.body);
+    db.executeSql("UPDATE `csquare`.`testlist` SET activetest=0,updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+
+router.post("/SaveStudentTest", (req, res, next) => {
+    console.log(req.body);
+    db.executeSql("INSERT INTO `submittedtest`(`studentid`,`testid`,`queid`,`answer`,`marks`,`createddate`)VALUES(" + req.body.studentid + "," + req.body.testid + "," + req.body.queid + ",'" + req.body.answer + "'," + req.body.marks + ",CURRENT_TIMESTAMP);", function (data, err) {
+        if (err) {
+            res.json("error");
+        } else {
+            res.json("success");
+        }
+    });
+});
+
+router.post("/ForgetPassword", (req, res, next) => {
+    console.log(req.body);
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        host: "smtp.gmail.com",
+        port: 465,
+        secure: false, // true for 465, false for other ports
+        auth: {
+            user: 'ptlshubham@gmail.com', // generated ethereal user
+            pass: 'spiderweb@1', // generated ethereal password
+        },
+    });
+    const output = `
+<p>You have new request</p>
+<h3>Contact Deails</h3>
+   `;
+    const mailOptions ={
+        from: '"KerYar" <ptlshubham@gmail.com>',
+        subject: "Product",
+        to: req.body.email,
+        Name: '${req.body.name}',
+        html: output
+
+    };
+    transporter.sendMail(mailOptions, function (error, info) {
+        console.log('fgfjfj')
+        if (error) {
+            console.log(error);
+            res.json("Errror");
+        } else {
+            console.log('Email sent: ' + info.response);
+            res.json("success");
+        }
+    });
+
+});
 // router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
 //     console.log('ygyguhguft')
 //     db.executeSql("select o.id,o.username,o.userid,o.addressid,o.productid,o.quantity,o.transactionid,o.modofpayment,o.total,o.status,o.orderdate,o.deliverydate,p.id as ProductId,p.productName,p.brandName,p.manufa ad.addresber from orders o inner join product p on o.productid=p.id inner join useraddress ad on ad.id = o.addressid where o.status='" + req.body.status + "';", function (data, err) {
@@ -733,10 +791,6 @@ router.get("/RemoveMainCategory/:id", midway.checkToken, (req, res, next) => {
     });
 });
 
-
-
-
-
 router.post("/SaveAddProducts", midway.checkToken, (req, res, next) => {
     console.log(req.body)
     if (req.body.id == undefined || req.body.id == null) {
@@ -786,9 +840,6 @@ router.post("/SaveAddProducts", midway.checkToken, (req, res, next) => {
 
 });
 
-
-
-
 router.get("/RemoveProduct/:id", midway.checkToken, (req, res, next) => {
 
     console.log(req.params.id);
@@ -813,8 +864,6 @@ router.get("/RemoveProduct/:id", midway.checkToken, (req, res, next) => {
     });
 })
 
-
-
 router.post("/SaveAdminRegister", (req, res, next) => {
     console.log("vdfvfvfv");
     var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
@@ -828,8 +877,6 @@ router.post("/SaveAdminRegister", (req, res, next) => {
         }
     });
 });
-
-
 
 router.post("/SaveMobileBanners", midway.checkToken, (req, res, next) => {
     console.log(req.body);
@@ -874,7 +921,6 @@ router.post("/RemoveMobileBanners", midway.checkToken, (req, res, next) => {
         }
     });
 });
-
 
 router.post("/getFilterProductList", midway.checkToken, (req, res, next) => {
     console.log(req.body);
@@ -927,7 +973,6 @@ router.post("/GetAllFilterProduct", (req, res, next) => {
 
 
 });
-
 
 router.get("/GetWebBanners", midway.checkToken, (req, res, next) => {
     console.log(req.body.id)
@@ -1022,7 +1067,6 @@ router.post("/UploadMultiProductImage", midway.checkToken, (req, res, next) => {
     });
 });
 
-
 router.get("/RemoveRecentUoloadImage", midway.checkToken, (req, res, next) => {
     console.log(req.body);
     db.executeSql("SELECT * FROM images ORDER BY createddate DESC LIMIT 1", function (data, err) {
@@ -1033,6 +1077,7 @@ router.get("/RemoveRecentUoloadImage", midway.checkToken, (req, res, next) => {
         }
     });
 })
+
 router.post("/UploadCategoryBannersImage", (req, res, next) => {
     var imgname = generateUUID();
 
@@ -1104,8 +1149,6 @@ router.post("/UploadMobileBannersImage", (req, res, next) => {
         console.log("You have uploaded this image");
     });
 });
-
-
 
 //filter apis
 router.post("/addToNewArrivals", midway.checkToken, (req, res, next) => {
