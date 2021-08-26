@@ -587,6 +587,19 @@ router.get("/GetWebBanner", (req, res, next) => {
     });
 });
 
+router.post("/GetStudentProfilePic", midway.checkToken, (req, res, next) => {
+    console.log("hey");
+        db.executeSql("select * from `studentlist` where id=" + req.body.id, function(data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                return res.json(data);
+            }
+        });
+    
+    
+})
+
 router.get("/getStudentTest", midway.checkToken, (req, res, next) => {
     console.log(req.body.id)
     db.executeSql("select * from testlist ", function (data, err) {
@@ -662,7 +675,7 @@ router.post("/ForgetPassword", (req, res, next) => {
 <p>You have new request</p>
 <h3>Contact Deails</h3>
    `;
-    const mailOptions ={
+    const mailOptions = {
         from: '"KerYar" <ptlshubham@gmail.com>',
         subject: "Product",
         to: req.body.email,
