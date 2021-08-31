@@ -120,7 +120,7 @@ router.get("/GetQueType", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/saveQueList", midway.checkToken, (req, res, next) => {
-    db.executeSql("INSERT INTO `questionlist`(`stdid`,`subid`,`question`,`marks`,`time`,`quetype`,`isactive`)VALUES(" + req.body.stdid + "," + req.body.subid + ",'" + req.body.question + "'," + req.body.marks + "," + req.body.time + ",'" + req.body.quetype + "',false);", function (data, err) {
+    db.executeSql("INSERT INTO `questionlist`(`stdid`,`subid`,`question`,`imageque`,`marks`,`time`,`quetype`,`isactive`)VALUES(" + req.body.stdid + "," + req.body.subid + ",'" + req.body.question + "','" + req.body.imageque + "'," + req.body.marks + "," + req.body.time + ",'" + req.body.quetype + "',false);", function (data, err) {
         // console.log(req.err)
         if (err) {
             console.log(err);
@@ -694,6 +694,79 @@ router.post("/ForgetPassword", (req, res, next) => {
         }
     });
 
+});
+
+
+router.post("/UploadQuestionImage", (req, res, next) => {
+    var imgname = generateUUID();
+
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'images/questions');
+        },
+        // By default, multer removes file extensions so let's add them back
+        filename: function (req, file, cb) {
+
+            cb(null, imgname + path.extname(file.originalname));
+        }
+    });
+    let upload = multer({ storage: storage }).single('file');
+    upload(req, res, function (err) {
+        console.log("path=", config.url + 'images/questions/' + req.file.filename);
+
+        if (req.fileValidationError) {
+            console.log("err1", req.fileValidationError);
+            return res.json("err1", req.fileValidationError);
+        } else if (!req.file) {
+            console.log('Please select an image to upload');
+            return res.json('Please select an image to upload');
+        } else if (err instanceof multer.MulterError) {
+            console.log("err3");
+            return res.json("err3", err);
+        } else if (err) {
+            console.log("err4");
+            return res.json("err4", err);
+        }
+        return res.json('/images/questions/' + req.file.filename);
+
+        console.log("You have uploaded this image");
+    });
+});
+
+router.post("/UploadOptionsImage", (req, res, next) => {
+    var imgname = generateUUID();
+
+    const storage = multer.diskStorage({
+        destination: function (req, file, cb) {
+            cb(null, 'images/options');
+        },
+        // By default, multer removes file extensions so let's add them back
+        filename: function (req, file, cb) {
+
+            cb(null, imgname + path.extname(file.originalname));
+        }
+    });
+    let upload = multer({ storage: storage }).single('file');
+    upload(req, res, function (err) {
+        console.log("path=", config.url + 'images/options/' + req.file.filename);
+
+        if (req.fileValidationError) {
+            console.log("err1", req.fileValidationError);
+            return res.json("err1", req.fileValidationError);
+        } else if (!req.file) {
+            console.log('Please select an image to upload');
+            return res.json('Please select an image to upload');
+        } else if (err instanceof multer.MulterError) {
+            console.log("err3");
+            return res.json("err3", err);
+        } else if (err) {
+            console.log("err4");
+            return res.json("err4", err);
+        }
+        return res.json('/images/options/' + req.file.filename);
+
+        console.log("You have uploaded this image");
+    });
 });
 // router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
 //     console.log('ygyguhguft')
