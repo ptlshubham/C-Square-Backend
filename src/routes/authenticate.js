@@ -13,7 +13,8 @@ router.post("/saveTeacherList", (req, res, next) => {
     var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
     var repass = salt + '' + req.body.password;
     var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
-    console.log(encPassword);
+    // console.log(encPassword);
+    console.log(req.body);
     db.executeSql("INSERT INTO `teacherlist`(`firstname`,`lastname`,`qualification`,`contact`,`whatsapp`,`email`,`password`,`address`,`gender`)VALUES('" + req.body.firstname + "','" + req.body.lastname + "','" + req.body.qualification + "','" + req.body.contact + "','" + req.body.Whatsapp + "','" + req.body.email + "','" + encPassword + "','" + req.body.address + "','" + req.body.gender + "');", function (data, err) {
         if (err) {
             console.log(err);
@@ -21,6 +22,17 @@ router.post("/saveTeacherList", (req, res, next) => {
         } else {
             // console.log(res)
             // console.log(err);
+            // res.json("success");
+            for(let i=0;i<req.body.rights.length;i++){
+                for(let j=0;j<req.body.rights[i].selsubjects.length;j++){
+                    db.executeSql("INSERT INTO `subrightstoteacher`(`teacherid`, `stdid`, `subid`, `updateddate`) VALUES ("+data.insertId+","+req.body.rights[i].stdid+","+req.body.rights[i].selsubjects[j].subid+",null)",function(data1,err){
+                        if(err){
+                            console.log(err);
+                        }
+                        else{}
+                    })
+                }
+            }
             res.json("success");
         }
     });
