@@ -35,7 +35,6 @@ router.get("/GetStdList", midway.checkToken, (req, res, next) => {
     });
 });
 
-
 router.get("/RemoveStandardList/:id", midway.checkToken, (req, res, next) => {
 
     console.log(req.params.id);
@@ -47,7 +46,6 @@ router.get("/RemoveStandardList/:id", midway.checkToken, (req, res, next) => {
         }
     });
 })
-
 
 router.post("/saveSubject", midway.checkToken, (req, res, next) => {
     console.log(req.body);
@@ -589,15 +587,15 @@ router.get("/GetWebBanner", (req, res, next) => {
 
 router.post("/GetStudentProfilePic", midway.checkToken, (req, res, next) => {
     console.log("hey");
-        db.executeSql("select * from `studentlist` where id=" + req.body.id, function(data, err) {
-            if (err) {
-                console.log("Error in store.js", err);
-            } else {
-                return res.json(data);
-            }
-        });
-    
-    
+    db.executeSql("select * from `studentlist` where id=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+
+
 })
 
 router.get("/getStudentTest", midway.checkToken, (req, res, next) => {
@@ -768,16 +766,90 @@ router.post("/UploadOptionsImage", (req, res, next) => {
         console.log("You have uploaded this image");
     });
 });
-// router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
-//     console.log('ygyguhguft')
-//     db.executeSql("select o.id,o.username,o.userid,o.addressid,o.productid,o.quantity,o.transactionid,o.modofpayment,o.total,o.status,o.orderdate,o.deliverydate,p.id as ProductId,p.productName,p.brandName,p.manufa ad.addresber from orders o inner join product p on o.productid=p.id inner join useraddress ad on ad.id = o.addressid where o.status='" + req.body.status + "';", function (data, err) {
-//         if (err) {
-//             console.log("Error in store.js", err);
-//         } else {
-//             return res.json(data);
-//         }
-//     });
-// });
+
+router.post("/saveCalendarEvents", (req, res, next) => {
+    console.log(req.body);
+    db.executeSql("INSERT INTO `events`(`date`,`title`,`active`,`createddate`)VALUES('" + req.body.date + "','" + req.body.title + "'," + req.body.active + ",CURRENT_TIMESTAMP);", function (data, err) {
+        if (err) {
+            res.json("error");
+        } else {
+            res.json("success");
+        }
+    });
+});
+
+router.get("/getCalendarEvents", (req, res, next) => {
+    db.executeSql("select * from events", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.post("/RemoveEventList", (req, res, next) => {
+    console.log(req.body.id)
+    db.executeSql("Delete from events where id=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.post("/saveStudentAttandance", (req, res, next) => {
+    console.log(req.body)
+    for (let i = 0; i < req.body.length; i++) {
+        db.executeSql("INSERT INTO `studentattandance`(`stuid`,`date`,`title`,`isactive`,`createddate`)VALUES(" + req.body[i].stuid + ",'" + req.body[i].date + "','" + req.body[i].title + "',1,CURRENT_TIMESTAMP);", function (data, err) {
+            if (err) {
+                console.log(err)
+            } else {
+
+            }
+        });
+    }
+    res.json("success");
+});
+
+router.get("/getStudentAttandance", (req, res, next) => {
+    db.executeSql("select * from studentattandance", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 router.get("/GetCustomerList", (req, res, next) => {
