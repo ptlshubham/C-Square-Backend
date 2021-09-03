@@ -193,7 +193,7 @@ router.post("/saveQueList", midway.checkToken, (req, res, next) => {
             if (req.body.quetype == 'MCQ') {
                 console.log(data.insertId);
                 for (let i = 0; i < req.body.options.length; i++) {
-                    db.executeSql("INSERT INTO `csquare`.`optionsvalue`(`queid`,`optionlist`)VALUES(" + data.insertId + ",'" + req.body.options[i].option + "');", function (data, err) {
+                    db.executeSql("INSERT INTO `csquare`.`optionsvalue`(`queid`,`optionlist`,`imageoption`)VALUES(" + data.insertId + ",'" + req.body.options[i].option + "','" + req.body.options[i].image + "');", function (data, err) {
                         if (err) {
                             console.log(err);
 
@@ -222,6 +222,7 @@ router.post("/saveQueList", midway.checkToken, (req, res, next) => {
         }
     });
 });
+
 router.post("/UpdateQuestionList", midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql(" UPDATE `questionlist` SET question='" + req.body.question + "',marks=" + req.body.marks + ",time=" + req.body.time + ",quetype='" + req.body.quetype + "',updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
@@ -232,6 +233,7 @@ router.post("/UpdateQuestionList", midway.checkToken, (req, res, next) => {
         }
     });
 });
+
 router.post("/getAllQueList", midway.checkToken, (req, res, next) => {
 
 
@@ -271,6 +273,7 @@ router.post("/getAllQueList", midway.checkToken, (req, res, next) => {
         }
     });
 });
+
 router.post("/SaveTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql("INSERT INTO `testlist`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`) VALUES (" + req.body.standardId + "," + req.body.subjectId + "," + req.body.totalmarks + "," + req.body.totalduration + ",'" + req.body.testname + "',true,CURRENT_TIMESTAMP,null)", function (data, err) {
@@ -289,7 +292,6 @@ router.post("/SaveTest", midway.checkToken, (req, res, next) => {
         }
     });
 })
-
 
 router.post("/removeQueList", midway.checkToken, (req, res, next) => {
     console.log(req.body)
@@ -399,6 +401,7 @@ router.post("/GetOptionValueTest", midway.checkToken, (req, res, next) => {
     })
 
 })
+
 router.get("/GetTeacherList", midway.checkToken, (req, res, next) => {
     db.executeSql("select * from teacherlist ", function (data, err) {
         if (err) {
@@ -491,7 +494,6 @@ router.post("/removeStudentList", midway.checkToken, (req, res, next) => {
         }
     });
 })
-
 
 router.post("/removeTecaherList", midway.checkToken, (req, res, next) => {
     console.log(req.body.id);
@@ -663,7 +665,6 @@ router.get("/getStudentTest", midway.checkToken, (req, res, next) => {
     });
 });
 
-
 router.post("/updateSendLink", midway.checkToken, (req, res, next) => {
     console.log('gfyguhufu')
     console.log(req.body);
@@ -676,7 +677,6 @@ router.post("/updateSendLink", midway.checkToken, (req, res, next) => {
     });
 });
 
-
 router.get("/GetStudentActiveTest", midway.checkToken, (req, res, next) => {
     db.executeSql("select t.id,t.stdid,t.subjectId,t.totalmarks,t.totalminute,t.testname,t.isactive,t.activetest,t.deactivetest,t.createdate,t.updateddate,s.stdname as StdName,su.subject from testlist t join stdlist s on t.stdid=s.id join subjectlist su on t.subjectId = su.id where t.activetest=1 ", function (data, err) {
         if (err) {
@@ -686,18 +686,6 @@ router.get("/GetStudentActiveTest", midway.checkToken, (req, res, next) => {
         }
     });
 });
-
-
-// router.post("/GetOrdersList", midway.checkToken, (req, res, next) => {
-//     console.log('ygyguhguft')
-//     db.executeSql("select o.id,o.username,o.userid,o.addressid,o.productid,o.quantity,o.transactionid,o.modofpayment,o.total,o.status,o.orderdate,o.deliverydate,p.id as ProductId,p.productName,p.brandName,p.manufa ad.addresber from orders o inner join product p on o.productid=p.id inner join useraddress ad on ad.id = o.addressid where o.status='" + req.body.status + "';", function (data, err) {
-//         if (err) {
-//             console.log("Error in store.js", err);
-//         } else {
-//             return res.json(data);
-//         }
-//     });
-// });
 
 router.post("/UpdatePendingTest", midway.checkToken, (req, res, next) => {
     console.log(req.body);
@@ -709,7 +697,6 @@ router.post("/UpdatePendingTest", midway.checkToken, (req, res, next) => {
         }
     });
 });
-
 
 router.post("/SaveStudentTest", (req, res, next) => {
     console.log(req.body);
@@ -759,7 +746,6 @@ router.post("/ForgetPassword", (req, res, next) => {
 
 });
 
-
 router.post("/UploadQuestionImage", (req, res, next) => {
     var imgname = generateUUID();
 
@@ -790,9 +776,10 @@ router.post("/UploadQuestionImage", (req, res, next) => {
             console.log("err4");
             return res.json("err4", err);
         }
+        console.log(res.json);
         return res.json('/images/questions/' + req.file.filename);
 
-        console.log("You have uploaded this image");
+
     });
 });
 
@@ -887,6 +874,27 @@ router.get("/getStudentAttandance", (req, res, next) => {
         }
     });
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 router.get("/GetCustomerList", (req, res, next) => {
