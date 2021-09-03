@@ -95,29 +95,44 @@ router.post("/saveSubject", midway.checkToken, (req, res, next) => {
 
 router.post("/GetSubjectList", midway.checkToken, (req, res, next) => {
     console.log(req.body);
-    db.executeSql("select * from subrightstoteacher where teacherid=" + req.body.teachid + " and stdid=" + req.body.id, function (data, err) {
-        let sub = [];
-
-        if (err) {
-            console.log(err)
-        }
-        else {
-            console.log(data);
-            for (let i = 0; i < data.length; i++) {
-                db.executeSql("select * from subjectlist where id=" + data[i].subid, function (data1, err) {
-                    if (err) {
-                        console.log("Error in store.js", err);
-                    } else {
-                        sub.push(data1[0]);
-                        if (sub.length == data.length) {
-                            return res.json(sub);
-                        }
-                    }
-                });
+    if(req.body.role == 'Admin'){
+        db.executeSql("select * from subjectlist where stdid=" + req.body.id, function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                
+                    return res.json(data);
+                }
+            
+        });
+    }
+    else{
+        db.executeSql("select * from subrightstoteacher where teacherid=" + req.body.teachid + " and stdid=" + req.body.id, function (data, err) {
+            let sub = [];
+    
+            if (err) {
+                console.log(err)
             }
-        }
+            else {
+                console.log(data);
+                for (let i = 0; i < data.length; i++) {
+                    db.executeSql("select * from subjectlist where id=" + data[i].subid, function (data1, err) {
+                        if (err) {
+                            console.log("Error in store.js", err);
+                        } else {
+                            sub.push(data1[0]);
+                            if (sub.length == data.length) {
+                                return res.json(sub);
+                            }
+                        }
+                    });
+                }
+            }
+    
+        })
+    }
 
-    })
+
 
 
 
