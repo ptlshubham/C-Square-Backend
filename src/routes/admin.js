@@ -27,31 +27,43 @@ router.post("/SaveStdList", midway.checkToken, (req, res, next) => {
 
 router.post("/GetStdList", midway.checkToken, (req, res, next) => {
     console.log(req.body);
-    db.executeSql("select distinct(stdid) from subrightstoteacher where teacherid=" + req.body.teachid, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            // console.log(data);
-            let std = [];
-            for (let i = 0; i < data.length; i++) {
-                db.executeSql("select * from stdlist where id=" + data[i].stdid, function (data1, err) {
-                    if (err) {
-                        console.log(err)
-                    }
-                    else {
-                        // console.log(data1);
-                        std.push(data1[0]);
-                        if (std.length == data.length) {
-                            res.json(std);
-                        }
-                    }
-                })
+    if(req.body.role == 'Admin'){
+        db.executeSql("select * from stdlist",function(data,err){
+            if(err){
+                console.log(err);
+            }else{
+                return res.json(data);
             }
-            // console.log(std);
-
-
-        }
-    });
+        })
+    }
+    else{
+        db.executeSql("select distinct(stdid) from subrightstoteacher where teacherid=" + req.body.teachid, function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                // console.log(data);
+                let std = [];
+                for (let i = 0; i < data.length; i++) {
+                    db.executeSql("select * from stdlist where id=" + data[i].stdid, function (data1, err) {
+                        if (err) {
+                            console.log(err)
+                        }
+                        else {
+                            // console.log(data1);
+                            std.push(data1[0]);
+                            if (std.length == data.length) {
+                                res.json(std);
+                            }
+                        }
+                    })
+                }
+                // console.log(std);
+    
+    
+            }
+        });
+    }
+  
 });
 
 router.get("/RemoveStandardList/:id", midway.checkToken, (req, res, next) => {
