@@ -26,7 +26,7 @@ router.post("/SaveStdList", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/GetStdList", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
+    // console.log(req.body);
     if (req.body.role == 'Admin') {
         db.executeSql("select * from stdlist", function (data, err) {
             if (err) {
@@ -79,7 +79,7 @@ router.get("/RemoveStandardList/:id", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/saveSubject", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
+    // console.log(req.body);
     for (let i = 0; i < req.body.length; i++) {
         db.executeSql("INSERT INTO `csquare`.`subjectlist`(`stdid`,`subject`,`isactive`)VALUES(" + req.body[i].id + ",'" + req.body[i].subject + "',true);", function (data, err) {
             if (err) {
@@ -94,7 +94,7 @@ router.post("/saveSubject", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/GetSubjectList", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
+    // console.log(req.body);
     if (req.body.role == 'Admin') {
         db.executeSql("select * from subjectlist where stdid=" + req.body.id, function (data, err) {
             if (err) {
@@ -241,39 +241,29 @@ router.post("/getAllQueList", midway.checkToken, (req, res, next) => {
         if (err) {
             console.log("Error in store.js", err);
         } else {
-            for (let i = 0; i < data.length; i++) {
-                console.log(data[i].id);
-                data[i].option = [];
-                data[i].answer = [];
-                db.executeSql("select * from optionsvalue where queid=" + data[i].id + ";", function (data1, err) {
-                    if (err) {
-                        console.log(err);
-                    }
-                    else {
-                        data[i].option = data1;
-                    }
-
-
-                });
-                db.executeSql("select * from answerlist where queid=" + data[i].id + ";", function (data2, err) {
-                    if (err) {
-                        console.log(err);
-                    } else if (data2.length > 0) {
-                        console.log(data2);
-                        data[i].answer = data2;
-                    }
-                    else {
-                        data[i].answer = [];
-                    }
-
-                })
-            };
-
             return res.json(data);
         }
     });
 });
-
+router.post("/getQueOptionList",midway.checkToken, (req,res,next)=>{
+    db.executeSql("select * from optionsvalue where queid=" + req.body.queid + ";", function (data1, err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+           return res.json(data1);
+        }
+    });
+})
+router.post("/getQueAnswer",midway.checkToken, (req,res,next)=>{
+    db.executeSql("select * from answerlist where queid=" + req.body.queid + ";", function (data, err) {
+        if (err) {
+            console.log(err);
+        } else {
+          return res.json(data);
+        }
+    });
+})
 router.post("/SaveTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
     db.executeSql("INSERT INTO `testlist`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`) VALUES (" + req.body.standardId + "," + req.body.subjectId + "," + req.body.totalmarks + "," + req.body.totalduration + ",'" + req.body.testname + "',true,CURRENT_TIMESTAMP,null)", function (data, err) {
@@ -432,14 +422,46 @@ router.get("/GetAllStudentList", midway.checkToken, (req, res, next) => {
     });
 });
 
-router.get("/GetAllTestList", midway.checkToken, (req, res, next) => {
-    db.executeSql("select * from testlist ", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
+router.post("/GetAllTestList", midway.checkToken, (req, res, next) => {
+    console.log("hare")
+    console.log(req.body);
+    if(req.body.role == 'Admin'){
+        db.executeSql("select * from testlist ", function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                return res.json(data);
+            }
+        });
+    }
+    else{
+        let test=[];
+        db.executeSql("select subid from subrightstoteacher where teacherid=" + req.body.teachid, function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                console.log(data);
+                for (let i = 0; i < data.length; i++) {
+                    db.executeSql("select * from testlist where subjectId="+data[i].subid, function (data2, err) {
+                        if (err) 
+                        {
+                            console.log("Error in store.js", err);
+                        } 
+                        else 
+                        {
+                            if(data2[0] != undefined){
+                                test.push(data2[0]);
+                            }
+                            if(data.length == (i+1)){
+                                return res.json(test);
+                            }
+                        }
+                    });
+         
+                }
+            }
+        }); 
+    }
 });
 
 let secret = 'prnv';
@@ -485,7 +507,7 @@ router.post('/login', function (req, res, next) {
 });
 
 router.post("/removeStudentList", midway.checkToken, (req, res, next) => {
-    console.log(req.body.id);
+    // console.log(req.body.id);
     db.executeSql("Delete from studentlist where id=" + req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -496,7 +518,7 @@ router.post("/removeStudentList", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/removeTecaherList", midway.checkToken, (req, res, next) => {
-    console.log(req.body.id);
+    // console.log(req.body.id);
     db.executeSql("Delete from teacherlist where id=" + req.body.id, function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -507,7 +529,7 @@ router.post("/removeTecaherList", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/UpdateTecaherList", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
+    // console.log(req.body)
     db.executeSql("UPDATE `teacherlist` SET `firstname`='" + req.body.firstname + "',`lastname`='" + req.body.lastname + "',`qualification`='" + req.body.qualification + "',`contact`='" + req.body.contact + "',`whatsapp`=" + req.body.whatsapp + ",`email`='" + req.body.email + "',`password`='" + req.body.password + "',`address`='" + req.body.address + "',`gender`='" + req.body.gender + "' WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -518,7 +540,7 @@ router.post("/UpdateTecaherList", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/UpdateStudentList", midway.checkToken, (req, res, next) => {
-    console.log(req.body.id)
+    // console.log(req.body.id)
     db.executeSql("UPDATE `studentlist` SET `firstname`='" + req.body.firstname + "',`middlename`='" + req.body.middlename + "',`lastname`='" + req.body.lastname + "',`email`='" + req.body.email + "',`password`='" + req.body.password + "',`gender`='" + req.body.gender + "',`contact`=" + req.body.contact + ",`parents`=" + req.body.parents + ",`address`='" + req.body.address + "',`city`='" + req.body.city + "',`pincode`=" + req.body.pincode + ",`standard`='" + req.body.standard + "',`grnumber`=" + req.body.grnumber + "  WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -601,7 +623,7 @@ router.post("/UploadBannersImage", (req, res, next) => {
 });
 
 router.post("/SaveWebBanners", (req, res, next) => {
-    console.log(req.body);
+    // console.log(req.body);
     db.executeSql("INSERT INTO `webbanners`(`name`,`bannersimage`,`status`)VALUES('" + req.body.name + "','" + req.body.bannersimage + "'," + req.body.status + ");", function (data, err) {
         if (err) {
             res.json("error");
@@ -655,7 +677,7 @@ router.get("/GetWebBanner", (req, res, next) => {
 });
 
 router.get("/getStudentTest", midway.checkToken, (req, res, next) => {
-    console.log(req.body.id)
+    // console.log(req.body.id)
     db.executeSql("select * from testlist ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
