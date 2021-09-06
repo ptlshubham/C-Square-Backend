@@ -23,13 +23,13 @@ router.post("/saveTeacherList", (req, res, next) => {
             // console.log(res)
             // console.log(err);
             // res.json("success");
-            for(let i=0;i<req.body.rights.length;i++){
-                for(let j=0;j<req.body.rights[i].selsubjects.length;j++){
-                    db.executeSql("INSERT INTO `subrightstoteacher`(`teacherid`, `stdid`, `subid`, `updateddate`) VALUES ("+data.insertId+","+req.body.rights[i].stdid+","+req.body.rights[i].selsubjects[j].subid+",null)",function(data1,err){
-                        if(err){
+            for (let i = 0; i < req.body.rights.length; i++) {
+                for (let j = 0; j < req.body.rights[i].selsubjects.length; j++) {
+                    db.executeSql("INSERT INTO `subrightstoteacher`(`teacherid`, `stdid`, `subid`, `updateddate`) VALUES (" + data.insertId + "," + req.body.rights[i].stdid + "," + req.body.rights[i].selsubjects[j].subid + ",null)", function (data1, err) {
+                        if (err) {
                             console.log(err);
                         }
-                        else{}
+                        else { }
                     })
                 }
             }
@@ -46,6 +46,23 @@ router.post("/SaveStudentList", (req, res, next) => {
     var repass = salt + '' + req.body.password;
     var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
     db.executeSql("INSERT INTO `studentlist`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`dateofbirth`,`contact`,`parents`,`fname`, `mname`, `mnumber`, `pactive`, `mactive`, `cactive`, `batchtime`, `cmmitfee`,`address`,`city`,`pincode`,`standard`,`grnumber`,`transport`,`propic`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + encPassword + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.fname + "','" + req.body.mname + "'," + req.body.mnumber + "," + req.body.pactive + "," + req.body.mactive + "," + req.body.cactive + ",'" + req.body.batchtime + "','" + req.body.cfees + "','" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.grnumber + "'," + req.body.transport + ",'" + req.body.profile + "');", function (data, err) {
+        if (err) {
+            console.log(err)
+        } else {
+
+            res.json("success");
+        }
+    });
+
+});
+
+router.post("/SaveVisitorDetails", (req, res, next) => {
+    console.log("unr here");
+
+    var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
+    var repass = salt + '' + req.body.password;
+    var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
+    db.executeSql("INSERT INTO `visitorreg`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`contact`,`parents`,`fname`, `mname`, `mnumber`,`address`,`city`,`pincode`,`standard`,`propic`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + encPassword + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.fname + "','" + req.body.mname + "'," + req.body.mnumber + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.profile + "');", function (data, err) {
         if (err) {
             console.log(err)
         } else {
