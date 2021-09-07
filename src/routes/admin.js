@@ -721,14 +721,22 @@ router.post("/UpdatePendingTest", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/SaveStudentTest", (req, res, next) => {
-    console.log(req.body);
-    db.executeSql("INSERT INTO `submittedtest`(`studentid`,`testid`,`queid`,`answer`,`marks`,`createddate`)VALUES(" + req.body.studentid + "," + req.body.testid + "," + req.body.queid + ",'" + req.body.answer + "'," + req.body.marks + ",CURRENT_TIMESTAMP);", function (data, err) {
-        if (err) {
-            res.json("error");
-        } else {
-            res.json("success");
-        }
-    });
+   
+    for(i=0;i<req.body.length;i++){
+        db.executeSql("INSERT INTO `submittedtest`(`studentid`,`testid`,`queid`,`answer`,`marks`,`createddate`)VALUES(" + req.body[i].studentid + "," + req.body[i].testid + "," + req.body[i].id + ",'" + req.body[i].answer + "'," + req.body[i].marks + ",CURRENT_TIMESTAMP);", function (data, err) {
+            if (err) {
+               console.log(err);
+            } else {
+                console.log(req.body.length);
+                console.log(i);
+                if(req.body.length == (i+1)){
+                //   return   res.json("success");
+                }
+               
+            }
+        });
+    }
+   
 });
 
 router.post("/ForgetPassword", (req, res, next) => {
