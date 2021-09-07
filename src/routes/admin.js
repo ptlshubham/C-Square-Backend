@@ -976,6 +976,37 @@ router.post("/GetVisitorQue", midway.checkToken, (req, res, next) => {
     });
 });
 
+router.post("/RemoveVisitorQue", midway.checkToken, (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("Delete from visitorquestion where id=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log(err);
+        } else {
+            db.executeSql("Delete from visitoroptions where queid=" + req.body.id, function (data, err) {
+                if (err) {
+                    console.log(err);
+
+                } else {
+                    db.executeSql("Delete from visitoranswer where queid=" + req.body.id, function (data, err) {
+                        if (err) {
+                            console.log(err);
+                        } else {
+                        }
+                    });
+                }
+            });
+            return res.json(data);
+        }
+    });
+})
+
+
+
+
+
+
+
+
 
 
 
