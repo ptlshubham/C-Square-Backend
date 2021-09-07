@@ -393,12 +393,13 @@ router.post("/GetOptionValueTest", midway.checkToken, (req, res, next) => {
 })
 
 router.get("/GetTeacherList", midway.checkToken, (req, res, next) => {
-    db.executeSql("select * from teacherlist ", function (data, err) {
+    db.executeSql("select * from teacherlist  ", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
             return res.json(data);
         }
+                
     });
 });
 
@@ -533,8 +534,29 @@ router.post("/UpdateTecaherList", midway.checkToken, (req, res, next) => {
     db.executeSql("UPDATE `teacherlist` SET `firstname`='" + req.body.firstname + "',`lastname`='" + req.body.lastname + "',`qualification`='" + req.body.qualification + "',`contact`='" + req.body.contact + "',`whatsapp`=" + req.body.whatsapp + ",`email`='" + req.body.email + "',`password`='" + req.body.password + "',`address`='" + req.body.address + "',`gender`='" + req.body.gender + "' WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
+        } 
+        else 
+        {
+            db.executeSql("delete from subrightstoteacher where teacherid="+req.body.id,function(data1,err){
+                if(err){
+                    console.log(err);
+                }
+                else{
+                    for (let i = 0; i < req.body.rights.length; i++) {
+                        for (let j = 0; j < req.body.rights[i].selsubjects.length; j++) {
+                            db.executeSql("INSERT INTO `subrightstoteacher`(`teacherid`, `stdid`, `subid`, `updateddate`) VALUES (" + req.body.id + "," + req.body.rights[i].stdid + "," + req.body.rights[i].selsubjects[j].subid + ",null)", function (data1, err) {
+                                if (err) {
+                                    console.log(err);
+                                }
+                                else {
+                                   
+                                 }
+                            })
+                        }
+                    }
+                }
+            });
+            return res.json('success');
         }
     });
 });
