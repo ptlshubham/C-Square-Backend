@@ -1000,6 +1000,25 @@ router.post("/RemoveVisitorQue", midway.checkToken, (req, res, next) => {
     });
 })
 
+router.post("/SaveVisitorTest", midway.checkToken, (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("INSERT INTO `visitortest`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`) VALUES (" + req.body.standardId + "," + req.body.subjectId + "," + req.body.totalmarks + "," + req.body.totalduration + ",'" + req.body.testname + "',true,CURRENT_TIMESTAMP,null)", function (data, err) {
+        if (err) {
+            console.log(err);
+        } else {
+            data.insertId
+            for (let i = 0; i < req.body.questionlist.length; i++) {
+                db.executeSql("INSERT INTO `visitortestque`(`testid`, `queid`) VALUES (" + data.insertId + "," + req.body.questionlist[i].id + ")", function (data, err) {
+                    if (err) {
+                        console.log(err)
+                    }
+                })
+            }
+            return res.json('success');
+        }
+    });
+})
+
 
 
 
