@@ -62,14 +62,14 @@ router.post("/SaveVisitorDetails", (req, res, next) => {
     var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
     var repass = salt + '' + req.body.password;
     var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
-    db.executeSql("INSERT INTO `visitorreg`(`firstname`,`middlename`,`lastname`,`email`,`password`,`gender`,`contact`,`parents`,`fname`, `mname`, `mnumber`,`address`,`city`,`pincode`,`standard`,`propic`)VALUES('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + encPassword + "','" + req.body.gender + "',10-07-2021," + req.body.contact + "," + req.body.parents + ",'" + req.body.fname + "','" + req.body.mname + "'," + req.body.mnumber + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + ",'" + req.body.standard + "','" + req.body.profile + "');", function (data, err) {
-        if (err) {
-            console.log(err)
-        } else {
-
-            res.json("success");
+    db.executeSql("INSERT INTO `visitorreg`( `firstname`, `middlename`, `lastname`, `email`, `password`, `gender`, `contact`, `mothername`, `wappnumber`, `address`, `city`, `pincode`, `standard`, `propic`, `subject`, `school`, `qualification`, `fatherCont`, `motherCont`, `percentage`) VALUES ('"+req.body.firstname+"','"+req.body.middlename+"','"+req.body.lastname+"','"+req.body.email+"','"+req.body.password+"','"+req.body.gender+"',"+req.body.contact+",'"+req.body.mname+"',"+req.body.wapp+",'"+req.body.address+"','"+req.body.city+"',"+req.body.pincode+","+req.body.stdid+",'"+req.body.profile+"',"+req.body.subid+",'"+req.body.schoolname+"','"+req.body.lastqualification+"',"+req.body.parents+",'"+req.body.mnumber+"',"+req.body.percentage+")",function(data,err){
+        if(err){
+            console.log(err);
         }
-    });
+        else{
+            return res.json("success");
+        }
+    })
 
 });
 const auth = () => {

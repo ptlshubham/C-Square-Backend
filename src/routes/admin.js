@@ -234,6 +234,17 @@ router.post("/UpdateQuestionList", midway.checkToken, (req, res, next) => {
     });
 });
 
+router.post("/SaveVisitorDetails",midway.checkToken,(req,res,next)=>{
+    db.executeSql("INSERT INTO `visitorreg`( `firstname`, `middlename`, `lastname`, `email`, `password`, `gender`, `contact`, `mothername`, `wappnumber`, `address`, `city`, `pincode`, `standard`, `propic`, `subject`, `school`, `qualification`, `fatherCont`, `motherCont`, `percentage`) VALUES ('"+req.body.firstname+"','"+req.body.middlename+"','"+req.body.lastname+"','"+req.body.email+"','"+req.body.password+"','"+req.body.gender+"',"+req.body.contact+",'"+req.body.mname+"',"+req.body.wapp+",'"+req.body.address+"','"+req.body.city+"',"+req.body.pincode+","+req.body.stdid+",'"+req.body.profile+"',"+req.body.subid+",'"+req.body.schoolname+"','"+req.body.lastqualification+"',"+req.body.parents+",'"+req.body.mnumber+"',"+req.body.percentage+")",function(data,err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            return res.json(data);
+        }
+    })
+})
+
 router.post("/getAllQueList", midway.checkToken, (req, res, next) => {
 
 
