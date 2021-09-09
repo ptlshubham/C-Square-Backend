@@ -1029,6 +1029,19 @@ router.post("/SaveVisitorTest", midway.checkToken, (req, res, next) => {
         }
     });
 })
+router.post("/GetVisitorTest", midway.checkToken, (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("select * from visitortest where subjectId=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            return res.json(data);
+
+        }
+    })
+
+})
 
 router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
