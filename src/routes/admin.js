@@ -1045,7 +1045,7 @@ router.post("/GetVisitorTest", midway.checkToken, (req, res, next) => {
 
 router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
-    db.executeSql("select * from submittedtest where studentid=" + req.body.id, function (data, err) {
+    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid from submittedtest t join testlist s on t.testid=s.id  where t.studentid="+req.body.id, function (data, err) {
         if (err) {
             console.log(err);
         }
