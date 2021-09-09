@@ -1045,7 +1045,7 @@ router.post("/GetVisitorTest", midway.checkToken, (req, res, next) => {
 
 router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
-    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid,s.testname,s.totalmarks from submittedtest t join testlist s on t.testid=s.id  where t.studentid="+req.body.id, function (data, err) {
+    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid,s.testname,s.totalmarks,s.id as testid from submittedtest t join testlist s on t.testid=s.id  where t.studentid="+req.body.id, function (data, err) {
         if (err) {
             console.log(err);
         }
@@ -1055,7 +1055,20 @@ router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
         }
     })
 
-})
+});
+
+router.post("/getTestforChecking",midway.checkToken,(req,res,next)=>{
+    console.log(req.body);
+    db.executeSql("select t.id ,t.question,t.imageque,t.marks,t.quetype,s.answer from questionlist t join submittedtest s on t.id=s.queid  where s.testid="+req.body.testid +" and s.studentid="+req.body.stuid, function (data, err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            console.log(data);
+            return res.json(data);
+        }
+    })
+});
 
 router.post("/GetSubjectByIdURL", midway.checkToken, (req, res, next) => {
     console.log(req.body)
