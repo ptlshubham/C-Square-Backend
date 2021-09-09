@@ -1057,6 +1057,19 @@ router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
 
 })
 
+router.post("/GetSubjectByIdURL", midway.checkToken, (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("select * from subjectlist where stdid=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            return res.json(data);
+
+        }
+    })
+
+})
 
 
 
