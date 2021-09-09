@@ -1097,9 +1097,8 @@ router.get("/GetAllVisitor", midway.checkToken, (req, res, next) => {
 
 })
 
-router.post("/UpdateInformStatus", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
-    db.executeSql("UPDATE `csquare`.`visitorreg` SET subject='" + req.body.subject + "' WHERE id=" + req.body.id + ";", function (data, err) {
+router.post("/UpdateVisitorInform", midway.checkToken, (req, res, next) => {
+    db.executeSql("UPDATE `csquare`.`visitorreg` SET isactive=" + req.body.isactive + " WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
