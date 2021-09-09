@@ -1013,7 +1013,7 @@ router.post("/RemoveVisitorQue", midway.checkToken, (req, res, next) => {
 
 router.post("/SaveVisitorTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
-    db.executeSql("INSERT INTO `visitortest`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`) VALUES (" + req.body.standardId + "," + req.body.subjectId + "," + req.body.totalmarks + "," + req.body.totalduration + ",'" + req.body.testname + "',true,CURRENT_TIMESTAMP,null)", function (data, err) {
+    db.executeSql("INSERT INTO `visitortest`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`) VALUES (" + req.body.stdId + "," + req.body.subjectId + "," + req.body.totalmarks + "," + req.body.totalduration + ",'" + req.body.testname + "',true,CURRENT_TIMESTAMP)", function (data, err) {
         if (err) {
             console.log(err);
         } else {
