@@ -1045,7 +1045,7 @@ router.post("/GetVisitorTest", midway.checkToken, (req, res, next) => {
 
 router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
-    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid,s.testname,s.totalmarks from submittedtest t join testlist s on t.testid=s.id  where t.studentid="+req.body.id, function (data, err) {
+    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid,s.testname,s.totalmarks from submittedtest t join testlist s on t.testid=s.id  where t.studentid=" + req.body.id, function (data, err) {
         if (err) {
             console.log(err);
         }
@@ -1071,7 +1071,29 @@ router.post("/GetSubjectByIdURL", midway.checkToken, (req, res, next) => {
 
 })
 
+router.get("/GetAllVisitor", midway.checkToken, (req, res, next) => {
+    db.executeSql("select * from visitorreg", function (data, err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            return res.json(data);
 
+        }
+    })
+
+})
+
+router.post("/UpdateInformStatus", midway.checkToken, (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("UPDATE `csquare`.`visitorreg` SET subject='" + req.body.subject + "' WHERE id=" + req.body.id + ";", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
 
 
 
