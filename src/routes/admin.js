@@ -367,8 +367,8 @@ router.post("/GetTestList", midway.checkToken, (req, res, next) => {
 
 router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
     console.log(req.body)
-    db.executeSql("select * from visitortest where stdid="+req.body.stdid+" and subjectid="+req.body.subid,function(data,err){
-        console.log("shhsduhsds",data);
+    db.executeSql("select * from visitortest where stdid=" + req.body.stdid + " and subjectid=" + req.body.subid, function (data, err) {
+        console.log("shhsduhsds", data);
         db.executeSql("select * from testquelist where testid=" + data[0].id, function (data, err) {
             if (err) {
                 console.log("Error in store.js", err);
@@ -971,7 +971,7 @@ router.post("/SaveVisitorQueList", midway.checkToken, (req, res, next) => {
                 console.log(req.body)
                 return res.json("success");
             }
-            // return res.json("success");
+            return res.json("success");
         }
     });
 });
@@ -1057,25 +1057,25 @@ router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
     })
 
 });
-router.post("/SaveTestResult",midway.checkToken,(req,res,next)=>{
-    let totalmarks=0;
-    for(let i=0;i<req.body.question.length;i++){
-        if(req.body.question[i].answer == 'undefined'){
-            req.body.question[i].answer='-';
+router.post("/SaveTestResult", midway.checkToken, (req, res, next) => {
+    let totalmarks = 0;
+    for (let i = 0; i < req.body.question.length; i++) {
+        if (req.body.question[i].answer == 'undefined') {
+            req.body.question[i].answer = '-';
         }
-        db.executeSql("INSERT INTO `testresult`(`testid`, `stdid`, `subid`, `studentid`, `totalmarks`, `obtainmarks`, `remark`, `createddate`, `answer`) VALUES ("+req.body.testid+","+req.body.stdid+","+req.body.subid+","+req.body.studentid+","+req.body.question[i].marks+","+req.body.question[i].obtainmarks+",'"+req.body.question[i].remark+"',CURRENT_TIMESTAMP,'"+req.body.question[i].answer+"')",function(data,err){
-            if(err){
+        db.executeSql("INSERT INTO `testresult`(`testid`, `stdid`, `subid`, `studentid`, `totalmarks`, `obtainmarks`, `remark`, `createddate`, `answer`) VALUES (" + req.body.testid + "," + req.body.stdid + "," + req.body.subid + "," + req.body.studentid + "," + req.body.question[i].marks + "," + req.body.question[i].obtainmarks + ",'" + req.body.question[i].remark + "',CURRENT_TIMESTAMP,'" + req.body.question[i].answer + "')", function (data, err) {
+            if (err) {
                 console.log(err);
             }
-            else{
-                
+            else {
+
                 totalmarks = totalmarks + req.body.question[i].obtainmarks;
-                if((i+1) == req.body.question.length){
+                if ((i + 1) == req.body.question.length) {
                     // return res.json('success');
-                    db.executeSql("INSERT INTO `finalresult`( `testid`, `totalmarks`, `createddate`, `studentid`) VALUES ("+req.body.testid+","+totalmarks+","+req.body.testid+",CURRENT_TIMESTAMP,"+req.body.studentid+")",function(data1,err){
-                        if(err){
+                    db.executeSql("INSERT INTO `finalresult`( `testid`, `totalmarks`, `createddate`, `studentid`) VALUES (" + req.body.testid + "," + totalmarks + "," + req.body.testid + ",CURRENT_TIMESTAMP," + req.body.studentid + ")", function (data1, err) {
+                        if (err) {
                             console.log(err)
-                        }else{
+                        } else {
                             return res.json('success');
                         }
                     })
@@ -1084,7 +1084,7 @@ router.post("/SaveTestResult",midway.checkToken,(req,res,next)=>{
             }
         })
     }
-    
+
 })
 
 router.post("/getTestforChecking", midway.checkToken, (req, res, next) => {
