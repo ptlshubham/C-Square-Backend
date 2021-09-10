@@ -1147,6 +1147,17 @@ router.post("/UpdateVisitorInform", midway.checkToken, (req, res, next) => {
     });
 });
 
+router.post("/GetVisitorTestList", midway.checkToken, (req, res, next) => {
+    db.executeSql("select * from visitortest where subjectId=" + req.body.id, function (data, err) {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            return res.json(data);
+        }
+    })
+});
+
 
 
 
