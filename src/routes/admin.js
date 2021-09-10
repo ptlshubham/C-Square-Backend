@@ -366,15 +366,14 @@ router.post("/GetTestList", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
-    db.executeSql("select * from visitortest where stdid=" + req.body.stdid + " and subjectid=" + req.body.subid, function (data, err) {
-        db.executeSql("select * from visitortestque where testid=" + data[0].id, function (data, err) {
+   
+      db.executeSql("select * from testquelist where testid=" + req.body.id, function (data, err) {
             if (err) {
                 console.log("Error in store.js", err);
             } else {
                 var qlist = [];
                 for (let i = 0; i < data.length; i++) {
-                    db.executeSql("select * from visitorquestion where id=" + data[i].queid, function (data1, err) {
+                    db.executeSql("select * from questionlist where id=" + data[i].queid, function (data1, err) {
                         if (err) {
                             console.log("Error in store.js", err);
                         } else {
@@ -387,7 +386,7 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
                 }
             }
         });
-    })
+    
 })
 
 router.post("/GetOptionValueTest", midway.checkToken, (req, res, next) => {
