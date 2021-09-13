@@ -611,8 +611,8 @@ router.post("/UpdateTecaherList", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/UpdateStudentList", midway.checkToken, (req, res, next) => {
-    // console.log(req.body.id)
-    db.executeSql("UPDATE `studentlist` SET `firstname`='" + req.body.firstname + "',`middlename`='" + req.body.middlename + "',`lastname`='" + req.body.lastname + "',`email`='" + req.body.email + "',`password`='" + req.body.password + "',`gender`='" + req.body.gender + "',`contact`=" + req.body.contact + ",`parents`=" + req.body.parents + ",`address`='" + req.body.address + "',`city`='" + req.body.city + "',`pincode`=" + req.body.pincode + ",`standard`='" + req.body.standard + "',`grnumber`=" + req.body.grnumber + "  WHERE id=" + req.body.id + ";", function (data, err) {
+    console.log(req.body)
+    db.executeSql("UPDATE `studentlist` SET `firstname`='" + req.body.firstname + "',`middlename`='" + req.body.middlename + "',`lastname`='" + req.body.lastname + "',`email`='" + req.body.email + "',`gender`='" + req.body.gender + "',`contact`=" + req.body.contact + ",`parents`=" + req.body.parents + ",`fname`='" + req.body.fname + "',`mname`='" + req.body.mname + "',`mnumber`=" + req.body.mnumber + ",`pactive`=" + req.body.pactive + ",`mactive`=" + req.body.mactive + ",`cactive`=" + req.body.cactive + ",`batchtime`='" + req.body.batchtime + "',`cmmitfee`='" + req.body.cmmitfee + "',`address`='" + req.body.address + "',`city`='" + req.body.city + "',`pincode`=" + req.body.pincode + ",`standard`='" + req.body.standard + "',`grnumber`=" + req.body.grnumber + ",`schoolname`='" + req.body.schoolname + "'  WHERE id=" + req.body.id + ";", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
         } else {
