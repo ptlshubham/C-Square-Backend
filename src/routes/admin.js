@@ -390,6 +390,7 @@ router.post("/GetViewTestList", midway.checkToken, (req, res, next) => {
 
 
 router.post("/GetViewVisitorTestList", midway.checkToken, (req, res, next) => {
+
     db.executeSql("select * from visitortest where stdid=" + req.body.stdid + " and subjectId=" + req.body.subid, function (data, err) {
         if (err) {
             console.log(err)
@@ -405,6 +406,7 @@ router.post("/GetViewVisitorTestList", midway.checkToken, (req, res, next) => {
                             if (err) {
                                 console.log("Error in store.js", err);
                             } else {
+                                data1[0].testid = data[0].id;
                                 qlist.push(data1[0]);
                                 if (qlist.length == data.length) {
                                     return res.json(qlist);
@@ -416,8 +418,6 @@ router.post("/GetViewVisitorTestList", midway.checkToken, (req, res, next) => {
             });
         }
     })
-
-
 })
 
 router.post("/GetOptionValueTest", midway.checkToken, (req, res, next) => {
@@ -1187,7 +1187,26 @@ router.post("/GetVisitorTestList", midway.checkToken, (req, res, next) => {
         }
     })
 });
+router.post("/SaveVisitorStudentTest", (req, res, next) => {
+    // console.log(req.body);
+    for (i = 0; i < req.body.length; i++) {
+        db.executeSql("INSERT INTO `visitorsubmittedtest`(`testid`,`queid`,`answer`,`marks`,`createddate`)VALUES(" + req.body[i].testid + "," + req.body[i].id + ",'" + req.body[i].answer + "'," + req.body[i].marks + ",CURRENT_TIMESTAMP);", function (data, err) {
+            if (err) {
+                console.log(err);
+            } else {
+                // console.log(req.body.length);
+                // console.log(i);
+                if (req.body.length == (i + 1)) {
+                    console.log("bhdhd")
 
+                }
+                //return res.json("success");
+            }
+        });
+    }
+    return res.json("success");
+
+});
 
 
 
