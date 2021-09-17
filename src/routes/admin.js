@@ -822,8 +822,8 @@ router.post("/ForgetPassword", (req, res, next) => {
                 console.log("Error in store.js", err);
                 return res.json('err');
             } else {
-
-                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "')", function (data1, err) {
+                console.log(req.body);
+                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`,`isactive`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "',true)", function (data1, err) {
                     if (err) {
                         console.log(err);
                     }
@@ -875,8 +875,8 @@ router.post("/ForgetPassword", (req, res, next) => {
                 console.log("Error in store.js", err);
                 return res.json('err');
             } else {
-
-                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "')", function (data1, err) {
+                console.log(req.body);
+                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`,`isactive`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "',true)", function (data1, err) {
                     if (err) {
                         console.log(err);
                     }
@@ -929,7 +929,7 @@ router.post("/ForgetPassword", (req, res, next) => {
                 return res.json('err');
             } else {
 
-                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "')", function (data1, err) {
+                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`,`isactive`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "',true)", function (data1, err) {
                     if (err) {
                         console.log(err);
                     }
@@ -946,7 +946,7 @@ router.post("/ForgetPassword", (req, res, next) => {
                         });
                         const output = `
                         <h3>One Time Password</h3>
-                        <p>To authenticate, please use the following One Time Password(OTP):<h3>`+ otp + `</h3></p>
+                        <p>To authenticate, please use the following One Time Password(OTP):<h3>` + otp + `</h3></p>
                         <p>OTP valid for only 2 Minutes.</P>
                         <p>Don't share this OTP with anyone.</p>
                         <a href="http://localhost:4200/password">Change Password</a>
@@ -1207,46 +1207,46 @@ router.post("/GetVisitorQue", midway.checkToken, (req, res, next) => {
 
 
 
-router.post("/ChackForPassword",midway.checkToken,(req,res,next)=>{
-    if(req.body.role == 'Teacher'){
+router.post("/ChackForPassword", midway.checkToken, (req, res, next) => {
+    if (req.body.role == 'Teacher') {
         var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
         var repass = salt + '' + req.body.pass;
         var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
-    db.executeSql("select * from teacherlist where id="+req.body.id+" and password='"+encPassword+"'",function(data,err){
-        if(err){
-            console.log(err);
-        }
-        else{
-            return res.json(data)
-        }
-    })
+        db.executeSql("select * from teacherlist where id=" + req.body.id + " and password='" + encPassword + "'", function (data, err) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                return res.json(data)
+            }
+        })
 
     }
-    else if(req.body.role == 'Student'){
+    else if (req.body.role == 'Student') {
         var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
         var repass = salt + '' + req.body.pass;
         var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
-    db.executeSql("select * from studentlist where id="+req.body.id+" and password='"+encPassword+"'",function(data,err){
-        if(err){
-            console.log(err);
-        }
-        else{
-            return res.json(data)
-        }
-    })
+        db.executeSql("select * from studentlist where id=" + req.body.id + " and password='" + encPassword + "'", function (data, err) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                return res.json(data)
+            }
+        })
     }
-    else{
+    else {
         var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
         var repass = salt + '' + req.body.pass;
         var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
-    db.executeSql("select * from admin where id="+req.body.id+" and password='"+encPassword+"'",function(data,err){
-        if(err){
-            console.log(err);
-        }
-        else{
-            return res.json(data)
-        }
-    })
+        db.executeSql("select * from admin where id=" + req.body.id + " and password='" + encPassword + "'", function (data, err) {
+            if (err) {
+                console.log(err);
+            }
+            else {
+                return res.json(data)
+            }
+        })
     }
 })
 
