@@ -476,7 +476,6 @@ router.get("/GetAllStudentList", midway.checkToken, (req, res, next) => {
 });
 
 router.post("/GetAllTestList", midway.checkToken, (req, res, next) => {
-    console.log("hare")
     console.log(req.body);
     if (req.body.role == 'Admin') {
         db.executeSql("select * from testlist ", function (data, err) {
@@ -621,7 +620,7 @@ router.post("/UpdateStudentList", midway.checkToken, (req, res, next) => {
     });
 });
 
-router.post("/UploadProfileImage", (req, res, next) => {
+router.post("/UploadProfileImage", midway.checkToken, (req, res, next) => {
     var imgname = generateUUID();
 
     const storage = multer.diskStorage({
@@ -657,7 +656,7 @@ router.post("/UploadProfileImage", (req, res, next) => {
     });
 });
 
-router.post("/UploadBannersImage", (req, res, next) => {
+router.post("/UploadBannersImage", midway.checkToken, (req, res, next) => {
     var imgname = generateUUID();
 
     const storage = multer.diskStorage({
@@ -693,7 +692,7 @@ router.post("/UploadBannersImage", (req, res, next) => {
     });
 });
 
-router.post("/SaveWebBanners", (req, res, next) => {
+router.post("/SaveWebBanners", midway.checkToken, (req, res, next) => {
     // console.log(req.body);
     db.executeSql("INSERT INTO `webbanners`(`name`,`bannersimage`,`status`)VALUES('" + req.body.name + "','" + req.body.bannersimage + "'," + req.body.status + ");", function (data, err) {
         if (err) {
@@ -737,7 +736,7 @@ router.post("/UpdateActiveWebBanners", midway.checkToken, (req, res, next) => {
     });
 });
 
-router.get("/GetWebBanner", (req, res, next) => {
+router.get("/GetWebBanner", midway.checkToken, (req, res, next) => {
     db.executeSql("select * from webbanners where status=1", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -791,7 +790,7 @@ router.post("/UpdatePendingTest", midway.checkToken, (req, res, next) => {
     });
 });
 
-router.post("/SaveStudentTest", (req, res, next) => {
+router.post("/SaveStudentTest", midway.checkToken, (req, res, next) => {
 
     for (i = 0; i < req.body.length; i++) {
         db.executeSql("INSERT INTO `submittedtest`(`studentid`,`testid`,`queid`,`answer`,`marks`,`createddate`)VALUES(" + req.body[i].studentid + "," + req.body[i].testid + "," + req.body[i].id + ",'" + req.body[i].answer + "'," + req.body[i].marks + ",CURRENT_TIMESTAMP);", function (data, err) {
@@ -847,7 +846,7 @@ router.post("/ForgetPassword", (req, res, next) => {
 
 });
 
-router.post("/UploadQuestionImage", (req, res, next) => {
+router.post("/UploadQuestionImage", midway.checkToken, (req, res, next) => {
     var imgname = generateUUID();
 
     const storage = multer.diskStorage({
@@ -884,7 +883,7 @@ router.post("/UploadQuestionImage", (req, res, next) => {
     });
 });
 
-router.post("/UploadOptionsImage", (req, res, next) => {
+router.post("/UploadOptionsImage", midway.checkToken, (req, res, next) => {
     var imgname = generateUUID();
 
     const storage = multer.diskStorage({
@@ -920,7 +919,7 @@ router.post("/UploadOptionsImage", (req, res, next) => {
     });
 });
 
-router.post("/saveCalendarEvents", (req, res, next) => {
+router.post("/saveCalendarEvents", midway.checkToken, (req, res, next) => {
     console.log(req.body);
     db.executeSql("INSERT INTO `events`(`date`,`title`,`active`,`createddate`)VALUES('" + req.body.date + "','" + req.body.title + "'," + req.body.active + ",CURRENT_TIMESTAMP);", function (data, err) {
         if (err) {
@@ -931,7 +930,7 @@ router.post("/saveCalendarEvents", (req, res, next) => {
     });
 });
 
-router.get("/getCalendarEvents", (req, res, next) => {
+router.get("/getCalendarEvents", midway.checkToken, (req, res, next) => {
     db.executeSql("select * from events", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -941,7 +940,7 @@ router.get("/getCalendarEvents", (req, res, next) => {
     });
 });
 
-router.post("/RemoveEventList", (req, res, next) => {
+router.post("/RemoveEventList", midway.checkToken, (req, res, next) => {
     console.log(req.body.id)
     db.executeSql("Delete from events where id=" + req.body.id, function (data, err) {
         if (err) {
@@ -952,7 +951,7 @@ router.post("/RemoveEventList", (req, res, next) => {
     });
 });
 
-router.post("/saveStudentAttandance", (req, res, next) => {
+router.post("/saveStudentAttandance", midway.checkToken, (req, res, next) => {
     console.log(req.body)
     for (let i = 0; i < req.body.length; i++) {
         db.executeSql("INSERT INTO `studentattandance`(`stuid`,`date`,`title`,`isactive`,`createddate`)VALUES(" + req.body[i].stuid + ",'" + req.body[i].date + "','" + req.body[i].title + "',1,CURRENT_TIMESTAMP);", function (data, err) {
@@ -966,7 +965,7 @@ router.post("/saveStudentAttandance", (req, res, next) => {
     res.json("success");
 });
 
-router.get("/getStudentAttandance", (req, res, next) => {
+router.get("/getStudentAttandance", midway.checkToken, (req, res, next) => {
     db.executeSql("select * from studentattandance", function (data, err) {
         if (err) {
             console.log("Error in store.js", err);
@@ -1027,6 +1026,51 @@ router.post("/GetVisitorQue", midway.checkToken, (req, res, next) => {
         }
     });
 });
+
+
+
+router.post("/ChackForPassword",midway.checkToken,(req,res,next)=>{
+    if(req.body.role == 'Teacher'){
+        var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
+        var repass = salt + '' + req.body.pass;
+        var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
+    db.executeSql("select * from teacherlist where id="+req.body.id+" and password='"+encPassword+"'",function(data,err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            return res.json(data)
+        }
+    })
+
+    }
+    else if(req.body.role == 'Student'){
+        var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
+        var repass = salt + '' + req.body.pass;
+        var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
+    db.executeSql("select * from studentlist where id="+req.body.id+" and password='"+encPassword+"'",function(data,err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            return res.json(data)
+        }
+    })
+    }
+    else{
+        var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
+        var repass = salt + '' + req.body.pass;
+        var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
+    db.executeSql("select * from admin where id="+req.body.id+" and password='"+encPassword+"'",function(data,err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            return res.json(data)
+        }
+    })
+    }
+})
 
 router.post("/RemoveVisitorQue", midway.checkToken, (req, res, next) => {
     console.log(req.body)
@@ -1188,552 +1232,6 @@ router.post("/GetVisitorTestList", midway.checkToken, (req, res, next) => {
     })
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-router.get("/GetCustomerList", (req, res, next) => {
-    db.executeSql("select * from user ", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-router.get("/GetMainCategory/:id", (req, res, next) => {
-    db.executeSql("select * from category where isactive=1 AND parent =" + req.params.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.post("/UpdateCategory", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
-    db.executeSql("UPDATE `ecommerce`.`category` SET parent=" + req.body.parent + ",bannersimage='" + req.body.bannerimage + "',name='" + req.body.name + "',updateddate=CURRENT_TIMESTAMP WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.post("/UpdateOrdersStatus", midway.checkToken, (req, res, next) => {
-    console.log('accept');
-    console.log(req.body);
-    db.executeSql("UPDATE `ecommerce`.`orders` SET status='" + req.body.status + "' WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.post("/AcceptUserOrders", midway.checkToken, (req, res, next) => {
-    console.log('accept');
-    console.log(req.body);
-    db.executeSql("UPDATE `ecommerce`.`orders` SET status= 'Accepted' WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.post("/ChangeOrdersStatus", midway.checkToken, (req, res, next) => {
-    console.log('accept');
-    console.log(req.body);
-    db.executeSql("UPDATE `ecommerce`.`orders` SET status= 'Accepted' WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-router.get("/GetProductList", midway.checkToken, (req, res, next) => {
-
-    db.executeSql("select p.id,p.productName,p.brandName,p.manufacturerName,p.productCode,p.startRating,p.productSRNumber,p.productPrice,p.discountPrice,p.emiOptions,p.avibilityStatus,p.descripition,p.relatedProduct,p.productSize,p.itemWeight,p.isActive,p.mainCategory,p.category,p.subCategory,p.productMainImage,p.createddate,p.updateddate,p.isNewArrival,p.isBestProduct,p.isHot,p.isOnSale from product p ", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-router.post("/GetProductSizeList", midway.checkToken, (req, res, next) => {
-
-    console.log(req.body);
-    db.executeSql("select * from quantitywithsize where productid=" + req.body.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.get("/RemoveMainCategory/:id", midway.checkToken, (req, res, next) => {
-    db.executeSql("UPDATE `ecommerce`.`category` SET updateddate=CURRENT_TIMESTAMP,isactive=0 WHERE id=" + req.params.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-
-
-
-
-router.post("/SaveAddProducts", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
-    if (req.body.id == undefined || req.body.id == null) {
-        db.executeSql("INSERT INTO `product`(`productName`,`brandName`,`manufacturerName`,`productCode`,`startRating`,`productSRNumber`,`productPrice`,`discountPrice`,`emiOptions`,`avibilityStatus`,`descripition`,`relatedProduct`,`productSize`,`itemWeight`,`isActive`,`mainCategory`,`category`,`subCategory`,`productMainImage`,`createddate`)VALUES('" + req.body.productName + "','" + req.body.brandName + "','" + req.body.manufacturerName + "'," + req.body.productCode + "," + req.body.startRating + ",'" + req.body.productSRNumber + "'," + req.body.productPrice + "," + req.body.discountPrice + "," + req.body.emiOptiions + "," + req.body.avibilityStatus + ",'" + req.body.descripition + "'," + req.body.relatedProduct + ",'" + req.body.productSize + "','" + req.body.itemWeight + "'," + req.body.isActive + "," + req.body.mainCategory + "," + req.body.category + "," + req.body.subCategory + ",'" + req.body.productMainImage + "',CURRENT_TIMESTAMP);", function (data, err) {
-            if (err) {
-                console.log("Error in store.js", err);
-            } else {
-                db.executeSql("SELECT id FROM product ORDER BY createddate DESC LIMIT 1", function (data1, err) {
-                    if (err) {
-                        console.log("Error in store.js", err);
-                    } else {
-                        console.log("CCCFFFFGF", req.body.selectedSize);
-                        req.body.selectedSize.forEach(element => {
-                            db.executeSql("INSERT INTO `quantitywithsize`(`productid`,`quantity`,`size`,`color`,`soldquantity`,`stockdate`)VALUES(" + data1[0].id + ",'" + element.quantity + "','" + element.selsize + "','" + element.color + "','" + element.soldquantity + "',CURRENT_TIMESTAMP);", function (data, err) {
-                                if (err) {
-                                    console.log("Error in store.js", err);
-                                } else {
-                                    console.log(req.body.multi)
-
-                                }
-                            });
-
-
-                        })
-                        for (let i = 0; i < req.body.multi.length; i++) {
-                            db.executeSql("INSERT INTO `images`(`mainCategoryId`,`productid`,`categoryId`,`subCategoryId`,`productListImage`,`createddate`)VALUES(" + req.body.mainCategory + "," + data1[0].id + "," + req.body.category + "," + req.body.subCategory + ",'" + req.body.multi[i] + "',CURRENT_TIMESTAMP);", function (data, err) {
-                                if (err) {
-                                    console.log("Error in store.js", err);
-                                } else { }
-                            });
-                        }
-                    }
-                });
-            }
-        })
-        res.json("success");
-    }
-    else {
-        db.executeSql("UPDATE `product` SET `productName`='" + req.body.productName + "',`brandName`='" + req.body.brandName + "',`manufacturerName`='" + req.body.manufacturerName + "',`productCode`=" + req.body.productCode + ",`startRating`=" + req.body.startRating + ",`productSRNumber`=" + req.body.productSRNumber + ",`productPrice`=" + req.body.productPrice + ",`discountPrice`=" + req.body.discountPrice + ",`emiOptions`=" + req.body.emiOptiions + ",`avibilityStatus`=" + req.body.avibilityStatus + ",`descripition`='" + req.body.descripition + "',`relatedProduct`='" + req.body.relatedProduct + "',`productSize`='" + req.body.productSize + "',`itemWeight`='" + req.body.itemWeight + "',`isActive`=" + req.body.isActive + ",`mainCategory`=" + req.body.mainCategory + ",`category`=" + req.body.category + ",`subCategory`=" + req.body.subCategory + ",`productMainImage`=" + req.body.productMainImage + ",`updateddate`=CURRENT_TIMESTAMP WHERE id=" + req.body.id, function (data, err) {
-            if (err) {
-                console.log("Error in store.js", err);
-            } else {
-                return res.json(data);
-            }
-        });
-    }
-
-});
-
-
-
-
-router.get("/RemoveProduct/:id", midway.checkToken, (req, res, next) => {
-
-    console.log(req.params.id);
-    db.executeSql("Delete from product where id=" + req.params.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            db.executeSql("Delete from images where id=" + req.params.id, function (data, err) {
-                if (err) {
-                    console.log("Error in store.js", err);
-                } else {
-                    db.executeSql("Delete from quantitywithsize where id=" + req.params.id, function (data, err) {
-                        if (err) {
-                            console.log("Error in store.js", err);
-                        } else {
-                            return res.json(data);
-                        }
-                    });
-                }
-            });
-        }
-    });
-})
-
-
-
-router.post("/SaveAdminRegister", (req, res, next) => {
-    console.log("vdfvfvfv");
-    var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
-    var repass = salt + '' + req.body.password;
-    var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
-    db.executeSql("INSERT INTO `admin`(`firstname`,`lastname`,`email`,`password`,`isactive`)VALUES('" + req.body.firstname + "','" + req.body.lastname + "','" + req.body.email + "','" + encPassword + "'," + req.body.isactive + ");", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-
-
-router.post("/SaveMobileBanners", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
-
-    db.executeSql("INSERT INTO `mobilebanners`(`name`,`bannersimage`,`status`)VALUES('" + req.body.name + "','" + req.body.bannersimage + "'," + req.body.status + ");", function (data, err) {
-        if (err) {
-            console.log(err);
-            res.json("error");
-        } else {
-            res.json("success");
-        }
-    });
-});
-router.post("/UpdateActiveMobileBanners", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
-    db.executeSql("UPDATE `ecommerce`.`mobilebanners` SET status=" + req.body.status + " WHERE id=" + req.body.id + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.get("/GetMobileBanners", (req, res, next) => {
-    db.executeSql("select * from mobilebanners ", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.post("/RemoveMobileBanners", midway.checkToken, (req, res, next) => {
-    console.log(req.body.id)
-    db.executeSql("Delete from mobilebanners where id=" + req.body.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-
-router.post("/getFilterProductList", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
-    db.executeSql("select * from product  where mainCategory=" + req.body.maincatid + " OR category=" + req.body.catid + " OR subCategory=" + req.body.subid + ";", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-
-        }
-    });
-});
-router.post("/GetAllFilterProduct", (req, res, next) => {
-    if (req.body.filter == 'hot') {
-        db.executeSql("select * from product where isHot=1", function (data, err) {
-            if (err) {
-                console.log("Error in store.js", err);
-            } else {
-                return res.json(data);
-            }
-        });
-    }
-    else if (req.body.filter == 'best') {
-        db.executeSql("select * from product where isBestProduct=1", function (data, err) {
-            if (err) {
-                console.log("Error in store.js", err);
-            } else {
-                return res.json(data);
-            }
-        });
-    }
-    else if (req.body.filter == 'sale') {
-        db.executeSql("select * from product where isOnSale=1", function (data, err) {
-            if (err) {
-                console.log("Error in store.js", err);
-            } else {
-                return res.json(data);
-            }
-        });
-    }
-    else {
-        db.executeSql("select * from product where isNewArrival=1", function (data, err) {
-            if (err) {
-                console.log("Error in store.js", err);
-            } else {
-                return res.json(data);
-            }
-        });
-    }
-
-
-});
-
-
-router.get("/GetWebBanners", midway.checkToken, (req, res, next) => {
-    console.log(req.body.id)
-    db.executeSql("select * from webbanners ", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.post("/RemoveWebBanners", midway.checkToken, (req, res, next) => {
-    console.log(req.id)
-    db.executeSql("Delete from webbanners where id=" + req.body.id, function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-});
-
-router.post("/UploadProductImage", midway.checkToken, (req, res, next) => {
-    var imgname = generateUUID();
-
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'images/products');
-        },
-        // By default, multer removes file extensions so let's add them back
-        filename: function (req, file, cb) {
-
-            cb(null, imgname + path.extname(file.originalname));
-        }
-    });
-    let upload = multer({ storage: storage }).single('file');
-    upload(req, res, function (err) {
-        console.log("path=", config.url + 'images/products/' + req.file.filename);
-
-        if (req.fileValidationError) {
-            console.log("err1", req.fileValidationError);
-            return res.json("err1", req.fileValidationError);
-        } else if (!req.file) {
-            console.log('Please select an image to upload');
-            return res.json('Please select an image to upload');
-        } else if (err instanceof multer.MulterError) {
-            console.log("err3");
-            return res.json("err3", err);
-        } else if (err) {
-            console.log("err4");
-            return res.json("err4", err);
-        }
-        return res.json('/images/products/' + req.file.filename);
-
-        console.log("You have uploaded this image");
-    });
-});
-
-router.post("/UploadMultiProductImage", midway.checkToken, (req, res, next) => {
-    var imgname = generateUUID();
-
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'images/products');
-        },
-        // By default, multer removes file extensions so let's add them back
-        filename: function (req, file, cb) {
-
-            cb(null, imgname + path.extname(file.originalname));
-        }
-    });
-    let upload = multer({ storage: storage }).single('file');
-    upload(req, res, function (err) {
-        console.log("path=", config.url + '/images/products/' + req.file.filename);
-
-        if (req.fileValidationError) {
-            console.log("err1", req.fileValidationError);
-            return res.json("err1", req.fileValidationError);
-        } else if (!req.file) {
-            console.log('Please select an image to upload');
-            return res.json('Please select an image to upload');
-        } else if (err instanceof multer.MulterError) {
-            console.log("err3");
-            return res.json("err3", err);
-        } else if (err) {
-            console.log("err4");
-            return res.json("err4", err);
-        }
-        return res.json('/images/products/' + req.file.filename);
-        console.log("You have uploaded this image");
-    });
-});
-
-
-router.get("/RemoveRecentUoloadImage", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
-    db.executeSql("SELECT * FROM images ORDER BY createddate DESC LIMIT 1", function (data, err) {
-        if (err) {
-            console.log("Error in store.js", err);
-        } else {
-            return res.json(data);
-        }
-    });
-})
-router.post("/UploadCategoryBannersImage", (req, res, next) => {
-    var imgname = generateUUID();
-
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'images/categorybanners/');
-        },
-        // By default, multer removes file extensions so let's add them back
-        filename: function (req, file, cb) {
-
-            cb(null, imgname + path.extname(file.originalname));
-        }
-    });
-    let upload = multer({ storage: storage }).single('file');
-    upload(req, res, function (err) {
-        console.log("path=", config.url + 'images/categorybanners/' + req.file.filename);
-
-        if (req.fileValidationError) {
-            console.log("err1", req.fileValidationError);
-            return res.json("err1", req.fileValidationError);
-        } else if (!req.file) {
-            console.log('Please select an image to upload');
-            return res.json('Please select an image to upload');
-        } else if (err instanceof multer.MulterError) {
-            console.log("err3");
-            return res.json("err3", err);
-        } else if (err) {
-            console.log("err4");
-            return res.json("err4", err);
-        }
-        return res.json('/images/categorybanners/' + req.file.filename);
-
-        console.log("You have uploaded this image");
-    });
-});
-
-router.post("/UploadMobileBannersImage", (req, res, next) => {
-    var imgname = generateUUID();
-
-    const storage = multer.diskStorage({
-        destination: function (req, file, cb) {
-            cb(null, 'images/mobilebanners');
-        },
-        // By default, multer removes file extensions so let's add them back
-        filename: function (req, file, cb) {
-
-            cb(null, imgname + path.extname(file.originalname));
-        }
-    });
-    let upload = multer({ storage: storage }).single('file');
-    upload(req, res, function (err) {
-        console.log("path=", config.url + 'images/mobilebanners/' + req.file.filename);
-
-        if (req.fileValidationError) {
-            console.log("err1", req.fileValidationError);
-            return res.json("err1", req.fileValidationError);
-        } else if (!req.file) {
-            console.log('Please select an image to upload');
-            return res.json('Please select an image to upload');
-        } else if (err instanceof multer.MulterError) {
-            console.log("err3");
-            return res.json("err3", err);
-        } else if (err) {
-            console.log("err4");
-            return res.json("err4", err);
-        }
-        return res.json('/images/mobilebanners/' + req.file.filename);
-
-        console.log("You have uploaded this image");
-    });
-});
-
-
-
-//filter apis
-router.post("/addToNewArrivals", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
-    for (let i = 0; i < req.body.length; i++) {
-        db.executeSql("update `ecommerce`.`product` SET isNewArrival=true,isBestProduct=false,isHot=false,isOnSale=false where id=" + req.body[i].id, function (data, err) {
-            if (err) {
-                console.log(err);
-
-            } else {
-
-            }
-        });
-    }
-    res.json("success");
-
-});
-
-router.post("/addToBestProduct", midway.checkToken, (req, res, next) => {
-    for (let i = 0; i < req.body.length; i++) {
-        db.executeSql("update `ecommerce`.`product` SET isNewArrival=false,isBestProduct=true,isHot=false,isOnSale=false where id=" + req.body[i].id, function (data, err) {
-            if (err) {
-                console.log(err);
-
-            } else {
-
-            }
-        });
-    }
-    res.json("success");
-
-});
-router.post("/addToHotProduct", midway.checkToken, (req, res, next) => {
-    for (let i = 0; i < req.body.length; i++) {
-        db.executeSql("update `ecommerce`.`product` SET isNewArrival=false,isBestProduct=false,isHot=true,isOnSale=false where id=" + req.body[i].id, function (data, err) {
-            if (err) {
-                console.log(err);
-
-            } else {
-
-            }
-        });
-    }
-    res.json("success");
-
-});
-router.post("/addToOnSale", midway.checkToken, (req, res, next) => {
-    for (let i = 0; i < req.body.length; i++) {
-        db.executeSql("update `ecommerce`.`product` SET isNewArrival=false,isBestProduct=false,isHot=false,isOnSale=true where id=" + req.body[i].id, function (data, err) {
-            if (err) {
-                console.log(err);
-
-            } else {
-
-            }
-        });
-    }
-    res.json("success");
-
-});
 
 
 function generateUUID() {
