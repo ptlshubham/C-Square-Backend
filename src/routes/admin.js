@@ -235,16 +235,16 @@ router.post("/UpdateQuestionList", midway.checkToken, (req, res, next) => {
     });
 });
 
-router.post("/SaveVisitorDetails", midway.checkToken, (req, res, next) => {
-    db.executeSql("INSERT INTO `visitorreg`( `firstname`, `middlename`, `lastname`, `email`, `password`, `gender`, `contact`, `mothername`, `wappnumber`, `address`, `city`, `pincode`, `standard`, `propic`, `subject`, `school`, `qualification`, `fatherCont`, `motherCont`, `percentage`) VALUES ('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "'," + req.body.contact + ",'" + req.body.mname + "'," + req.body.wapp + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + "," + req.body.stdid + ",'" + req.body.profile + "'," + req.body.subid + ",'" + req.body.schoolname + "','" + req.body.lastqualification + "'," + req.body.parents + ",'" + req.body.mnumber + "'," + req.body.percentage + ")", function (data, err) {
-        if (err) {
-            console.log(err);
-        }
-        else {
-            return res.json(data);
-        }
-    })
-})
+// router.post("/SaveVisitorDetails", midway.checkToken, (req, res, next) => {
+//     db.executeSql("INSERT INTO `visitorreg`( `firstname`, `middlename`, `lastname`, `email`, `password`, `gender`, `contact`, `mothername`, `wappnumber`, `address`, `city`, `pincode`, `standard`, `propic`, `subject`, `school`, `qualification`, `fatherCont`, `motherCont`, `percentage`) VALUES ('" + req.body.firstname + "','" + req.body.middlename + "','" + req.body.lastname + "','" + req.body.email + "','" + req.body.password + "','" + req.body.gender + "'," + req.body.contact + ",'" + req.body.mname + "'," + req.body.wapp + ",'" + req.body.address + "','" + req.body.city + "'," + req.body.pincode + "," + req.body.stdid + ",'" + req.body.profile + "'," + req.body.subid + ",'" + req.body.schoolname + "','" + req.body.lastqualification + "'," + req.body.parents + ",'" + req.body.mnumber + "'," + req.body.percentage + ")", function (data, err) {
+//         if (err) {
+//             console.log(err);
+//         }
+//         else {
+//             return res.json(data);
+//         }
+//     })
+// })
 
 router.post("/getAllQueList", midway.checkToken, (req, res, next) => {
 
@@ -1410,25 +1410,74 @@ router.post("/GetVisitorTestList", midway.checkToken, (req, res, next) => {
     })
 });
 router.post("/SaveVisitorStudentTest", (req, res, next) => {
-    // console.log(req.body);
+     console.log(req.body);
+    let totalmarks=0;
     for (i = 0; i < req.body.length; i++) {
-        db.executeSql("INSERT INTO `visitorsubmittedtest`(`testid`,`queid`,`answer`,`marks`,`createddate`)VALUES(" + req.body[i].testid + "," + req.body[i].id + ",'" + req.body[i].answer + "'," + req.body[i].marks + ",CURRENT_TIMESTAMP);", function (data, err) {
+        db.executeSql("INSERT INTO `visitorsubmittedtest`(`studentid`,`testid`,`queid`,`answer`,`marks`,`createddate`)VALUES("+req.body[i].uid+ ","+ req.body[i].testid + "," + req.body[i].id + ",'" + req.body[i].answer + "'," + req.body[i].marks + ",CURRENT_TIMESTAMP);", function (data, err) {
             if (err) {
                 console.log(err);
             } else {
-                // console.log(req.body.length);
+                //  console.log(req.body[i]);
                 // console.log(i);
-                if (req.body.length == (i + 1)) {
-                    console.log("bhdhd")
+                // db.executeSql("select * from visitoranswer where queid="+req.body[i].id,function(data1,err){
+                //     if(err){
+                //         console.log(err);
+                //     }
+                //     else{
+                //         if(req.body[i].answer == data1[0].answer){
+                //             totalmarks = totalmarks + data[i].marks;
+                //         }
+                //         if((req.body.length -1)==i){
+                //             return res.json(totalmarks);
+                //         }
 
-                }
-                //return res.json("success");
+                //     }
+                // })
+
+
+                // if (req.body.length == (i + 1)) {
+                   
+
+                // }
+                // return res.json("success");
             }
         });
     }
     return res.json("success");
 
 });
+
+router.post("/GetVisitorResult",(req,res,next)=>{
+    db.executeSql("select * from visitorsubmittedtest where studentid="+req.body.uid,function(data,err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            let totalmarks =0;
+            let k=1;
+            for(let i=0;i<data.length;i++){
+                db.executeSql("select * from visitoranswer where queid="+data[i].queid,function(data1,err){
+                    if(err){
+                        console.log(err);
+                    }
+                    else{
+                        k++;
+                        console.log(k+":"+data[i].answer +"--"+data1[0].answer);
+
+                        if(data[i].answer == data1[0].answer){
+                            totalmarks = totalmarks+data[i].marks;
+                        }
+                        if( k == data.length){
+                            return res.json(totalmarks);
+                        }
+                    }
+                })
+            }
+        }
+    })
+})
+
+
 
 
 function generateUUID() {

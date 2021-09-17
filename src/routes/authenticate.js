@@ -69,7 +69,7 @@ router.post("/SaveVisitorDetails", (req, res, next) => {
             console.log(err);
         }
         else {
-            return res.json("success");
+            return res.json(data);
         }
     })
 
