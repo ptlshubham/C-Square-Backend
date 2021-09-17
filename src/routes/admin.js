@@ -10,6 +10,7 @@ var crypto = require('crypto');
 const { equal } = require("assert");
 const { Console } = require("console");
 const { json } = require("body-parser");
+const nodemailer = require('nodemailer');
 
 
 
@@ -810,42 +811,220 @@ router.post("/SaveStudentTest", (req, res, next) => {
 
 });
 
-router.post("/ForgetPassword", (req, res, next) => {
-    console.log(req.body);
-    const transporter = nodemailer.createTransport({
-        service: 'gmail',
-        host: "smtp.gmail.com",
-        port: 465,
-        secure: false, // true for 465, false for other ports
-        auth: {
-            user: 'ptlshubham@gmail.com', // generated ethereal user
-            pass: 'spiderweb@1', // generated ethereal password
-        },
-    });
-    const output = `
-<p>You have new request</p>
-<h3>Contact Deails</h3>
-   `;
-    const mailOptions = {
-        from: '"KerYar" <ptlshubham@gmail.com>',
-        subject: "Product",
-        to: req.body.email,
-        Name: '${req.body.name}',
-        html: output
+// console.log(otp);
 
-    };
-    transporter.sendMail(mailOptions, function (error, info) {
-        console.log('fgfjfj')
-        if (error) {
-            console.log(error);
-            res.json("Errror");
-        } else {
-            console.log('Email sent: ' + info.response);
-            res.json("success");
-        }
-    });
+
+router.post("/ForgetPassword", (req, res, next) => {
+    let otp = Math.floor(100000 + Math.random() * 900000);
+    console.log(req.body);
+    if (req.body.role == 'Teacher') {
+        db.executeSql("select * from teacherlist where email='" + req.body.email + "';", function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+                return res.json('err');
+            } else {
+
+                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "')", function (data1, err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        const transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            host: "smtp.gmail.com",
+                            port: 465,
+                            secure: false, // true for 465, false for other ports
+                            auth: {
+                                user: 'ptlshubham@gmail.com', // generated ethereal user
+                                pass: 'spiderweb@1', // generated ethereal password
+                            },
+                        });
+                        const output = `
+                        <h3>One Time Password</h3>
+                        <p>To authenticate, please use the following One Time Password(OTP):<h3>`+ otp + `</h3></p>
+                        <p>OTP valid for only 2 Minutes.</P>
+                        <p>Don't share this OTP with anyone.</p>
+                        <a href="http://localhost:4200/password">Change Password</a>
+`;
+                        const mailOptions = {
+                            from: '"KerYar" <ptlshubham@gmail.com>',
+                            subject: "Password resetting",
+                            to: req.body.email,
+                            Name: '',
+                            html: output
+
+                        };
+                        transporter.sendMail(mailOptions, function (error, info) {
+                            console.log('fgfjfj')
+                            if (error) {
+                                console.log(error);
+                                res.json("Errror");
+                            } else {
+                                console.log('Email sent: ' + info.response);
+                                res.json(data);
+                            }
+                        });
+                    }
+                })
+
+            }
+        });
+    }
+    else if (req.body.role == 'Student') {
+        db.executeSql("select * from studentlist where email='" + req.body.email + "';", function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+                return res.json('err');
+            } else {
+
+                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "')", function (data1, err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        const transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            host: "smtp.gmail.com",
+                            port: 465,
+                            secure: false, // true for 465, false for other ports
+                            auth: {
+                                user: 'ptlshubham@gmail.com', // generated ethereal user
+                                pass: 'spiderweb@1', // generated ethereal password
+                            },
+                        });
+                        const output = `
+                        <h3>One Time Password</h3>
+                        <p>To authenticate, please use the following One Time Password(OTP):<h3>`+ otp + `</h3></p>
+                        <p>OTP valid for only 2 Minutes.</P>
+                        <p>Don't share this OTP with anyone.</p>
+                        <a href="http://localhost:4200/password">Change Password</a>
+`;
+                        const mailOptions = {
+                            from: '"KerYar" <ptlshubham@gmail.com>',
+                            subject: "Password resetting",
+                            to: req.body.email,
+                            Name: '',
+                            html: output
+
+                        };
+                        transporter.sendMail(mailOptions, function (error, info) {
+                            console.log('fgfjfj')
+                            if (error) {
+                                console.log(error);
+                                res.json("Errror");
+                            } else {
+                                console.log('Email sent: ' + info.response);
+                                res.json(data);
+                            }
+                        });
+                    }
+                })
+                console.log(req.body)
+            }
+        });
+    }
+    else {
+        db.executeSql("select * from admin where email='" + req.body.email + "';", function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+                return res.json('err');
+            } else {
+
+                db.executeSql("INSERT INTO `otp`(`userid`, `otp`, `createddate`, `createdtime`,`role`) VALUES (" + data[0].id + "," + otp + ",CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,'" + req.body.role + "')", function (data1, err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                        const transporter = nodemailer.createTransport({
+                            service: 'gmail',
+                            host: "smtp.gmail.com",
+                            port: 465,
+                            secure: false, // true for 465, false for other ports
+                            auth: {
+                                user: 'ptlshubham@gmail.com', // generated ethereal user
+                                pass: 'spiderweb@1', // generated ethereal password
+                            },
+                        });
+                        const output = `
+                        <h3>One Time Password</h3>
+                        <p>To authenticate, please use the following One Time Password(OTP):<h3>`+ otp + `</h3></p>
+                        <p>OTP valid for only 2 Minutes.</P>
+                        <p>Don't share this OTP with anyone.</p>
+                        <a href="http://localhost:4200/password">Change Password</a>
+`;
+                        const mailOptions = {
+                            from: '"KerYar" <ptlshubham@gmail.com>',
+                            subject: "Password resetting",
+                            to: req.body.email,
+                            Name: '',
+                            html: output
+
+                        };
+                        transporter.sendMail(mailOptions, function (error, info) {
+                            console.log('fgfjfj')
+                            if (error) {
+                                console.log(error);
+                                res.json("Errror");
+                            } else {
+                                console.log('Email sent: ' + info.response);
+                                res.json(data);
+                            }
+                        });
+                    }
+                })
+                console.log(req.body)
+            }
+        });
+    }
 
 });
+
+router.post("/GetOneTimePassword", (req, res, next) => {
+    console.log(req.body)
+    db.executeSql("select * from otp where userid = " + req.body.id + " and otp = " + req.body.otp + " ", function (data, err) {
+        if (err) {
+            console.log("Error in store.js", err);
+        } else {
+            return res.json(data);
+        }
+    });
+});
+
+router.post("/updatePasswordAccordingRole", (req, res, next) => {
+    console.log(req.body)
+    var salt = '7fa73b47df808d36c5fe328546ddef8b9011b2c6';
+    var repass = salt + '' + req.body.password;
+    var encPassword = crypto.createHash('sha1').update(repass).digest('hex');
+    if (req.body.role == 'Teacher') {
+        db.executeSql("UPDATE teacherlist SET password='" + encPassword + "' WHERE id=" + req.body.id + ";", function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                console.log("shsyuhgsuygdyusgdyus", data);
+                return res.json(data);
+            }
+        });
+    }
+    else if (req.body.role == 'Student') {
+        db.executeSql("UPDATE `csquare`.`studentlist` SET password='" + encPassword + "' WHERE id=" + req.body.id + ";", function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                return res.json(data);
+            }
+        });
+    }
+    else {
+        db.executeSql("UPDATE `csquare`.`admin` SET password='" + encPassword + "' WHERE id=" + req.body.id + ";", function (data, err) {
+            if (err) {
+                console.log("Error in store.js", err);
+            } else {
+                return res.json(data);
+            }
+        });
+    }
+});
+
 
 router.post("/UploadQuestionImage", (req, res, next) => {
     var imgname = generateUUID();
