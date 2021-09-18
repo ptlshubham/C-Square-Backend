@@ -1307,8 +1307,8 @@ router.post("/GetVisitorTest", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
-    console.log(req.body)
-    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid,s.testname,s.totalmarks,s.id as testid from submittedtest t join testlist s on t.testid=s.id  where t.studentid=" + req.body.id, function (data, err) {
+    console.log("fefefeefefefef",req.body)
+    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid,s.testname,s.totalmarks,s.id as testid from  testlist s  join submittedtest t on t.testid=s.id  where t.studentid=" + req.body.id, function (data, err) {
         if (err) {
             console.log(err);
         }
@@ -1334,7 +1334,7 @@ router.post("/SaveTestResult", midway.checkToken, (req, res, next) => {
                 totalmarks = totalmarks + req.body.question[i].obtainmarks;
                 if ((i + 1) == req.body.question.length) {
                     // return res.json('success');
-                    db.executeSql("INSERT INTO `finalresult`( `testid`, `totalmarks`, `createddate`, `studentid`) VALUES (" + req.body.testid + "," + totalmarks + "," + req.body.testid + ",CURRENT_TIMESTAMP," + req.body.studentid + ")", function (data1, err) {
+                    db.executeSql("INSERT INTO `finalresult`( `testid`, `totalmarks`, `createddate`, `studentid`) VALUES (" + req.body.testid + "," + totalmarks + ",CURRENT_TIMESTAMP," + req.body.studentid + ")", function (data1, err) {
                         if (err) {
                             console.log(err)
                         } else {
@@ -1461,7 +1461,7 @@ router.post("/GetVisitorResult",(req,res,next)=>{
                         console.log(err);
                     }
                     else{
-                        k++;
+                        console.log(data.length);
                         console.log(k+":"+data[i].answer +"--"+data1[0].answer);
 
                         if(data[i].answer == data1[0].answer){
@@ -1470,9 +1470,22 @@ router.post("/GetVisitorResult",(req,res,next)=>{
                         if( k == data.length){
                             return res.json(totalmarks);
                         }
+                        k++;
                     }
                 })
             }
+        }
+    })
+});
+
+router.post("/UpdateVisitorResult",(req,res,next)=>{
+    db.executeSql("Update visitorreg set ObtainMarks="+req.body.marks+" where id="+req.body.uid,function(data,err){
+        if(err){
+            console.log(err)
+        }
+        else{
+            console.log("ddedeeeee");
+            return res.json('success');
         }
     })
 })
