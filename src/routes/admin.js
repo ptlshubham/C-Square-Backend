@@ -1511,7 +1511,7 @@ router.post("/setStatusOfTest", midway.checkToken, (req, res, next) => {
 
 router.post("/updateStatusOfTest", midway.checkToken, (req, res, next) => {
     console.log(req.body);
-    db.executeSql("Update testattempt set status=" + req.body.status + " where testid=" + req.body.testid, function (data, err) {
+    db.executeSql("Update testattempt set status='" + req.body.status + "' where testid=" + req.body.testid, function (data, err) {
         if (err) {
             console.log(err)
         }
