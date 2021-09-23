@@ -1314,19 +1314,75 @@ router.post("/GetVisitorTest", (req, res, next) => {
         }
     })
 
-})
+});
 
-router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
-    db.executeSql("select t.id,t.studentid,t.queid,t.answer,t.marks,s.subjectId as subid,s.testname,s.totalmarks,s.id as testid from  testlist s  join submittedtest t on t.testid=s.id  where t.studentid=" + req.body.id, function (data, err) {
-        if (err) {
+router.post("/GetTotalofTestmarks",midway.checkToken,(req,res,next)=>{
+    console.log(req.body)
+    db.executeSql("select * from testresult where studentid="+req.body.stuid+" and testid="+req.body.testid,function(data,err){
+        if(err){
             console.log(err);
         }
-        else {
-            return res.json(data);
+        else{
+            // console.log(data);
+            if( data == []){
+                console.log("pppppp");
+                return res.json(0);
+            }
+            else{
+                let getmarks=0;
+                let p =0;
+                for(let i=0;i<data.length;i++){
+                    getmarks=  getmarks+data[i].obtainmarks;
+                    p=p+1;
+                    if(data.length == p){
+                        console.log("hfhfhfh",getmarks);
+                        return res.json(getmarks);
+                    }
+                }
+            }
+          
+           
 
         }
     })
+});
 
+router.post("/GetSatusofTest",midway.checkToken,(req,res,next)=>{
+    db.executeSql("select status from testattempt where testid="+req.body.testid+" and stuid="+req.body.stuid,function(data,err){
+        if(err){
+            console.log(err);
+        }
+        else{
+            console.log("status=",data)
+            return res.json(data[0]);
+        }
+    })
+})
+
+router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
+    db.executeSql("select DISTINCT testid from submittedtest where studentid="+req.body.stuid,function(data,err){
+        if(err){
+            console.log("lvl1",err);
+        }
+        else{
+            let record=[];
+            for(let i=0;i<data.length;i++){
+                db.executeSql("select s.id as testid,s.totalmarks,s.testname,s.subjectId as subid, SUM(r.obtainmarks) as getmarks from  testlist s  join submittedtest t on t.testid=s.id  join  testresult r on  r.testid = s.id    where s.id="+data[i].testid, function (data1, err) {
+                    if (err) {
+                        console.log(err);
+                    }
+                    else {
+                            record.push(data1[0]);
+                            if(record.length == data.length){
+                                console.log(record)
+                                return res.json(record);
+                            }
+            
+                    }
+                })
+            }
+        }
+    })
 });
 router.post("/SaveTestResult", midway.checkToken, (req, res, next) => {
     let totalmarks = 0;
@@ -1359,7 +1415,7 @@ router.post("/SaveTestResult", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/getTestforChecking", midway.checkToken, (req, res, next) => {
-    console.log(req.body);
+    console.log("getTestforChecking",req.body);
     db.executeSql("select t.id ,t.question,t.imageque,t.marks,t.quetype,s.answer from questionlist t join submittedtest s on t.id=s.queid  where s.testid=" + req.body.testid + " and s.studentid=" + req.body.stuid, function (data, err) {
         if (err) {
             console.log(err);
