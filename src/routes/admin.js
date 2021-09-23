@@ -800,13 +800,13 @@ router.post("/SaveStudentTest", midway.checkToken, (req, res, next) => {
                 console.log(req.body.length);
                 console.log(i);
                 if (req.body.length == (i + 1)) {
-                       
+
                 }
 
             }
         });
     }
-    return   res.json("success");
+    return res.json("success");
 });
 
 // console.log(otp);
