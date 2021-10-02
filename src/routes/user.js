@@ -623,8 +623,8 @@ router.post("/SendEmailToUser", (req, res, next) => {
         port: 465,
         secure: false, // true for 465, false for other ports
         auth: {
-            user: 'ptlshubham@gmail.com', // generated ethereal user
-            pass: 'spiderweb@1', // generated ethereal password
+            user: 'keryaritsolutions@gmail.com', // generated ethereal user
+            pass: 'sHAIL@2210', // generated ethereal password
         },
     });
     const output = `
@@ -645,7 +645,7 @@ router.post("/SendEmailToUser", (req, res, next) => {
 </ul>
    `;
     const mailOptions = {
-        from: '"KerYar" <ptlshubham@gmail.com>',
+        from: '"KerYar" <keryaritsolutions@gmail.com>',
         subject: "Product",
         to: req.body.email,
         Name: '${req.body.name}',

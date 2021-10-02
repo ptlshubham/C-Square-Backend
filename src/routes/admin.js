@@ -278,7 +278,7 @@ router.post("/getQueAnswer", midway.checkToken, (req, res, next) => {
 })
 router.post("/SaveTest", midway.checkToken, (req, res, next) => {
     console.log(req.body)
-    db.executeSql("INSERT INTO `testlist`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`) VALUES (" + req.body.standardId + "," + req.body.subjectId + "," + req.body.totalmarks + "," + req.body.totalduration + ",'" + req.body.testname + "',true,CURRENT_TIMESTAMP,null)", function (data, err) {
+    db.executeSql("INSERT INTO `testlist`( `stdid`, `subjectId`, `totalmarks`, `totalminute`, `testname`, `isactive`, `createdate`, `updateddate`,`testdate`,`testtime`) VALUES (" + req.body.standardId + "," + req.body.subjectId + "," + req.body.totalmarks + "," + req.body.totalduration + ",'" + req.body.testname + "',true,CURRENT_TIMESTAMP,null,'" + req.body.testdate + "','" + req.body.timeslots + "')", function (data, err) {
         if (err) {
             console.log(err);
         } else {
@@ -833,8 +833,8 @@ router.post("/ForgetPassword", (req, res, next) => {
                             port: 465,
                             secure: false, // true for 465, false for other ports
                             auth: {
-                                user: 'ptlshubham@gmail.com', // generated ethereal user
-                                pass: 'spiderweb@1', // generated ethereal password
+                                user: 'keryaritsolutions@gmail.com', // generated ethereal user
+                                pass: 'sHAIL@2210', // generated ethereal password
                             },
                         });
                         const output = `
@@ -845,7 +845,7 @@ router.post("/ForgetPassword", (req, res, next) => {
                         <a href="http://localhost:4200/password">Change Password</a>
 `;
                         const mailOptions = {
-                            from: '"KerYar" <ptlshubham@gmail.com>',
+                            from: '"KerYar" <keryaritsolutions@gmail.com>',
                             subject: "Password resetting",
                             to: req.body.email,
                             Name: '',
@@ -886,8 +886,8 @@ router.post("/ForgetPassword", (req, res, next) => {
                             port: 465,
                             secure: false, // true for 465, false for other ports
                             auth: {
-                                user: 'ptlshubham@gmail.com', // generated ethereal user
-                                pass: 'spiderweb@1', // generated ethereal password
+                                user: 'keryaritsolutions@gmail.com', // generated ethereal user
+                                pass: 'sHAIL@2210', // generated ethereal password
                             },
                         });
                         const output = `
@@ -898,7 +898,7 @@ router.post("/ForgetPassword", (req, res, next) => {
                         <a href="http://localhost:4200/password">Change Password</a>
 `;
                         const mailOptions = {
-                            from: '"KerYar" <ptlshubham@gmail.com>',
+                            from: '"KerYar" <keryaritsolutions@gmail.com>',
                             subject: "Password resetting",
                             to: req.body.email,
                             Name: '',
@@ -939,8 +939,8 @@ router.post("/ForgetPassword", (req, res, next) => {
                             port: 465,
                             secure: false, // true for 465, false for other ports
                             auth: {
-                                user: 'ptlshubham@gmail.com', // generated ethereal user
-                                pass: 'spiderweb@1', // generated ethereal password
+                                user: 'keryaritsolutions@gmail.com', // generated ethereal user
+                                pass: 'sHAIL@2210', // generated ethereal password
                             },
                         });
                         const output = `
@@ -951,7 +951,7 @@ router.post("/ForgetPassword", (req, res, next) => {
                         <a href="http://localhost:4200/password">Change Password</a>
 `;
                         const mailOptions = {
-                            from: '"KerYar" <ptlshubham@gmail.com>',
+                            from: '"KerYar" <keryaritsolutions@gmail.com>',
                             subject: "Password resetting",
                             to: req.body.email,
                             Name: '',
@@ -1316,68 +1316,68 @@ router.post("/GetVisitorTest", (req, res, next) => {
 
 });
 
-router.post("/GetTotalofTestmarks",midway.checkToken,(req,res,next)=>{
+router.post("/GetTotalofTestmarks", midway.checkToken, (req, res, next) => {
     console.log(req.body)
-    db.executeSql("select * from testresult where studentid="+req.body.stuid+" and testid="+req.body.testid,function(data,err){
-        if(err){
+    db.executeSql("select * from testresult where studentid=" + req.body.stuid + " and testid=" + req.body.testid, function (data, err) {
+        if (err) {
             console.log(err);
         }
-        else{
+        else {
             // console.log(data);
-            if( data == []){
+            if (data == []) {
                 console.log("pppppp");
                 return res.json(0);
             }
-            else{
-                let getmarks=0;
-                let p =0;
-                for(let i=0;i<data.length;i++){
-                    getmarks=  getmarks+data[i].obtainmarks;
-                    p=p+1;
-                    if(data.length == p){
-                        console.log("hfhfhfh",getmarks);
+            else {
+                let getmarks = 0;
+                let p = 0;
+                for (let i = 0; i < data.length; i++) {
+                    getmarks = getmarks + data[i].obtainmarks;
+                    p = p + 1;
+                    if (data.length == p) {
+                        console.log("hfhfhfh", getmarks);
                         return res.json(getmarks);
                     }
                 }
             }
-          
-           
+
+
 
         }
     })
 });
 
-router.post("/GetSatusofTest",midway.checkToken,(req,res,next)=>{
-    db.executeSql("select status from testattempt where testid="+req.body.testid+" and stuid="+req.body.stuid,function(data,err){
-        if(err){
+router.post("/GetSatusofTest", midway.checkToken, (req, res, next) => {
+    db.executeSql("select status from testattempt where testid=" + req.body.testid + " and stuid=" + req.body.stuid, function (data, err) {
+        if (err) {
             console.log(err);
         }
-        else{
-            console.log("status=",data)
+        else {
+            console.log("status=", data)
             return res.json(data[0]);
         }
     })
 })
 
 router.post("/GetSubmittedTest", midway.checkToken, (req, res, next) => {
-    db.executeSql("select DISTINCT testid from submittedtest where studentid="+req.body.stuid,function(data,err){
-        if(err){
-            console.log("lvl1",err);
+    db.executeSql("select DISTINCT testid from submittedtest where studentid=" + req.body.stuid, function (data, err) {
+        if (err) {
+            console.log("lvl1", err);
         }
-        else{
-            let record=[];
-            for(let i=0;i<data.length;i++){
-                db.executeSql("select s.id as testid,s.totalmarks,s.testname,s.subjectId as subid, SUM(r.obtainmarks) as getmarks from  testlist s  join submittedtest t on t.testid=s.id  join  testresult r on  r.testid = s.id    where s.id="+data[i].testid, function (data1, err) {
+        else {
+            let record = [];
+            for (let i = 0; i < data.length; i++) {
+                db.executeSql("select s.id as testid,s.totalmarks,s.testname,s.subjectId as subid, SUM(r.obtainmarks) as getmarks from  testlist s  join submittedtest t on t.testid=s.id  join  testresult r on  r.testid = s.id    where s.id=" + data[i].testid, function (data1, err) {
                     if (err) {
                         console.log(err);
                     }
                     else {
-                            record.push(data1[0]);
-                            if(record.length == data.length){
-                                console.log(record)
-                                return res.json(record);
-                            }
-            
+                        record.push(data1[0]);
+                        if (record.length == data.length) {
+                            console.log(record)
+                            return res.json(record);
+                        }
+
                     }
                 })
             }
@@ -1415,7 +1415,7 @@ router.post("/SaveTestResult", midway.checkToken, (req, res, next) => {
 })
 
 router.post("/getTestforChecking", midway.checkToken, (req, res, next) => {
-    console.log("getTestforChecking",req.body);
+    console.log("getTestforChecking", req.body);
     db.executeSql("select t.id ,t.question,t.imageque,t.marks,t.quetype,s.answer from questionlist t join submittedtest s on t.id=s.queid  where s.testid=" + req.body.testid + " and s.studentid=" + req.body.stuid, function (data, err) {
         if (err) {
             console.log(err);
